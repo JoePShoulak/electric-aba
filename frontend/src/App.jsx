@@ -3,37 +3,28 @@ import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import axios from "axios";
 import Signup from "./components/Signup";
 import Login from "./components/Login";
-import Profile from "./components/Profile";
-import UserList from "./components/UserList";
 
 const App = () => {
   const [currentUser, setCurrentUser] = useState(null);
 
-  // Check if a token exists in localStorage and validate it
   useEffect(() => {
     const token = localStorage.getItem("token");
-
     if (token) {
-      // If token exists, fetch user data from the backend to verify the token
       axios
         .get("http://localhost:5000/api/users/profile", {
           headers: { Authorization: `Bearer ${token}` },
         })
-        .then(response => {
-          console.log("User data:", response.data); // Check the response
-          setCurrentUser(response.data); // Set the current user if token is valid
-        })
+        .then(response => setCurrentUser(response.data))
         .catch(() => {
-          localStorage.removeItem("token"); // Remove invalid token
+          localStorage.removeItem("token");
           setCurrentUser(null);
         });
     }
   }, []);
 
-  // Logout function
   const logout = () => {
     localStorage.removeItem("token");
-    setCurrentUser(null); // Clear the current user when logging out
+    setCurrentUser(null);
   };
 
   return (
@@ -43,25 +34,25 @@ const App = () => {
           <Link to="/">Home</Link> |{" "}
           {currentUser ? (
             <>
-              <Link to="/profile">Profile</Link> |{" "}
-              <button onClick={logout}>Logout</button>{" "}
-              {/* Logout button only if logged in */}
+              <button onClick={logout}>Logout</button>
             </>
           ) : (
             <>
-              <Link to="/signup">Sign Up</Link> |{" "}
-              {/* Sign Up link only if logged out */}
-              <Link to="/login">Login</Link>{" "}
-              {/* Login link only if logged out */}
+              <Link to="/signup">Sign Up</Link> | <Link to="/login">Login</Link>
             </>
           )}
         </nav>
 
         <Routes>
-          <Route path="/" element={<UserList currentUser={currentUser} />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/profile" element={<Profile user={currentUser} />} />
+          <Route path="/" element={<h1>Home Page</h1>} />
+          <Route
+            path="/signup"
+            element={<Signup setCurrentUser={setCurrentUser} />}
+          />
+          <Route
+            path="/login"
+            element={<Login setCurrentUser={setCurrentUser} />}
+          />
         </Routes>
       </div>
     </Router>
