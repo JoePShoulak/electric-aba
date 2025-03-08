@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom"; // Import Link to navigate to profile pages
 
 const UserList = ({ currentUser, setCurrentUser }) => {
   const [users, setUsers] = useState([]);
@@ -44,7 +45,8 @@ const UserList = ({ currentUser, setCurrentUser }) => {
         {users.length > 0 ? (
           users.map(user => (
             <li key={user._id}>
-              <p>Username: {user.username}</p>
+              {/* Make username a clickable link */}
+              <Link to={`/profile/${user._id}`}>{user.username}</Link>
               <p>Email: {user.email}</p>
               {currentUser && currentUser._id === user._id && (
                 <button onClick={() => handleDelete(user._id)}>Delete</button>

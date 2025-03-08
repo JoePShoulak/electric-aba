@@ -113,15 +113,55 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// Profile route: GET /api/users/profile
-router.get("/profile", authMiddleware, async (req, res) => {
+// Get user profile by ID (public route)
+router.get("/profile/:id", async (req, res) => {
   try {
-    const user = await User.findById(req.userId); // Fetch the user by ID from the token
+    const user = await User.findById(req.params.id); // Get user by ID from URL params
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
     res.status(200).json(user); // Return user data
   } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Update user profile (only logged-in user can update their profile)
+router.put("/profile", authMiddleware, async (req, res) => {
+  const { username, email } = req.body;
+
+  try {
+    const user = await User.findById(req.userId); // Get user by token-provided ID
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Update user details
+    user.username = username || user.username;
+    user.email = email || user.email;
+
+    await user.save(); // Save the updated user details
+
+    res.status(200).json(user); // Return the updated user data
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Get the logged-in user's profile
+router.get("/profile", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId); // Get the logged-in user by their ID from the token
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json({
+      username: user.username,
+      email: user.email,
+      _id: user._id, // Send back the user data (modify this according to what you need in the frontend)
+    });
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ message: error.message });
   }
 });

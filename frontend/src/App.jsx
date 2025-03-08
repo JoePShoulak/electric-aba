@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import axios from "axios";
 import Signup from "./components/Signup";
 import Login from "./components/Login";
-import UserList from "./components/UserList"; // Import UserList component
+import Profile from "./components/Profile"; // Import Profile component
+import UserList from "./components/UserList";
 
 const App = () => {
   const [currentUser, setCurrentUser] = useState(null);
@@ -53,8 +54,7 @@ const App = () => {
                 setCurrentUser={setCurrentUser}
               />
             }
-          />{" "}
-          {/* Display UserList on Home Page */}
+          />
           <Route
             path="/signup"
             element={<Signup setCurrentUser={setCurrentUser} />}
@@ -62,6 +62,15 @@ const App = () => {
           <Route
             path="/login"
             element={<Login setCurrentUser={setCurrentUser} />}
+          />
+          <Route
+            path="/profile/:id"
+            element={
+              <Profile
+                currentUser={currentUser}
+                setCurrentUser={setCurrentUser}
+              />
+            }
           />
         </Routes>
       </div>
