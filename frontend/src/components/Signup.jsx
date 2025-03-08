@@ -8,7 +8,6 @@ const Signup = ({ setCurrentUser }) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState(""); // New state for confirm password
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async e => {
@@ -53,7 +52,6 @@ const Signup = ({ setCurrentUser }) => {
     <div>
       <h2>Sign Up</h2>
       {error && <p>{error}</p>}
-      {success && <p>{success}</p>}
       <form onSubmit={handleSubmit}>
         <input
           type="text"
