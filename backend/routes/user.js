@@ -22,6 +22,16 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
+// Get all users route
+router.get("/all", async (req, res) => {
+  try {
+    const users = await User.find(); // Fetch all users from the database
+    res.status(200).json(users); // Return the list of users
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // Signup route
 router.post("/signup", async (req, res) => {
   const { username, email, password } = req.body;

@@ -34,7 +34,7 @@ const Signup = ({ setCurrentUser }) => {
       setCurrentUser(userResponse.data);
       navigate("/"); // Redirect after successful signup
     } catch (err) {
-      setError("Error signing up. Please try again.");
+      setError("Error signing up. Please try again. Error: " + err);
     }
   };
 

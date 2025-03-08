@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import axios from "axios";
 import Signup from "./components/Signup";
 import Login from "./components/Login";
+import UserList from "./components/UserList"; // Import UserList component
 
 const App = () => {
   const [currentUser, setCurrentUser] = useState(null);
@@ -44,7 +45,7 @@ const App = () => {
         </nav>
 
         <Routes>
-          <Route path="/" element={<h1>Home Page</h1>} />
+          <Route path="/" element={<UserList />} />
           <Route
             path="/signup"
             element={<Signup setCurrentUser={setCurrentUser} />}

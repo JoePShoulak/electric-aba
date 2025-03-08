@@ -32,7 +32,7 @@ const Login = ({ setCurrentUser }) => {
       setCurrentUser(userResponse.data);
       navigate("/"); // Redirect after successful login
     } catch (err) {
-      setError("Invalid credentials or error logging in.");
+      setError("Invalid credentials or error logging in. Error: " + err);
     }
   };
 
