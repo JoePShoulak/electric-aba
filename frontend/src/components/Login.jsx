@@ -11,6 +11,7 @@ const Login = ({ setCurrentUser }) => {
   const handleSubmit = async e => {
     e.preventDefault();
     try {
+      // Send login request
       const response = await axios.post(
         "http://localhost:5000/api/users/login",
         {
@@ -22,17 +23,19 @@ const Login = ({ setCurrentUser }) => {
       const token = response.data.token;
       localStorage.setItem("token", token); // Store token in localStorage
 
+      // Fetch the logged-in user's profile
       const userResponse = await axios.get(
         "http://localhost:5000/api/users/profile",
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}` }, // Ensure the token is sent here
         }
       );
 
-      setCurrentUser(userResponse.data);
-      navigate("/"); // Redirect after successful login
+      setCurrentUser(userResponse.data); // Set user data in app state
+      navigate("/"); // Redirect to home after successful login
     } catch (err) {
-      setError("Invalid credentials or error logging in. Error: " + err);
+      setError("Invalid credentials or error logging in.");
+      console.error(err);
     }
   };
 

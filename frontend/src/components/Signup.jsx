@@ -13,13 +13,14 @@ const Signup = ({ setCurrentUser }) => {
   const handleSubmit = async e => {
     e.preventDefault();
 
-    // Check if password and confirmPassword match
+    // Check if passwords match
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
 
     try {
+      // Send signup request
       const response = await axios.post(
         "http://localhost:5000/api/users/signup",
         {
@@ -36,12 +37,12 @@ const Signup = ({ setCurrentUser }) => {
       const userResponse = await axios.get(
         "http://localhost:5000/api/users/profile",
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}` }, // Ensure token is sent
         }
       );
 
-      setCurrentUser(userResponse.data); // Set user in app state
-      navigate("/"); // Redirect to the home page
+      setCurrentUser(userResponse.data); // Set user data in app state
+      navigate("/"); // Redirect to home after successful signup
     } catch (err) {
       setError("Invalid credentials or error logging in.");
       console.error(err);
