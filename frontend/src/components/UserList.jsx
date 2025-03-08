@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const UserList = () => {
+const UserList = ({ currentUser, setCurrentUser }) => {
   const [users, setUsers] = useState([]);
   const [error, setError] = useState("");
 
@@ -18,6 +18,24 @@ const UserList = () => {
       });
   }, []); // Empty dependency array means this runs once after the component mounts
 
+  // Function to handle user deletion
+  const handleDelete = userId => {
+    // Send a DELETE request to the backend to delete the user
+    axios
+      .delete("http://localhost:5000/api/users/delete", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then(() => {
+        setUsers(users.filter(user => user._id !== userId)); // Remove the deleted user from the UI
+        setCurrentUser(null); // Clear the currentUser state after deletion
+        localStorage.removeItem("token"); // Remove the token from localStorage
+      })
+      .catch(err => {
+        setError("Error deleting the user.");
+        console.error(err);
+      });
+  };
+
   return (
     <div>
       <h2>All Users</h2>
@@ -28,6 +46,9 @@ const UserList = () => {
             <li key={user._id}>
               <p>Username: {user.username}</p>
               <p>Email: {user.email}</p>
+              {currentUser && currentUser._id === user._id && (
+                <button onClick={() => handleDelete(user._id)}>Delete</button>
+              )}
             </li>
           ))
         ) : (

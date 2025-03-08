@@ -45,7 +45,16 @@ const App = () => {
         </nav>
 
         <Routes>
-          <Route path="/" element={<UserList />} />
+          <Route
+            path="/"
+            element={
+              <UserList
+                currentUser={currentUser}
+                setCurrentUser={setCurrentUser}
+              />
+            }
+          />{" "}
+          {/* Display UserList on Home Page */}
           <Route
             path="/signup"
             element={<Signup setCurrentUser={setCurrentUser} />}

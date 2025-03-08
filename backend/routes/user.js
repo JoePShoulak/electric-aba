@@ -32,6 +32,23 @@ router.get("/all", async (req, res) => {
   }
 });
 
+// Delete user route
+router.delete("/delete", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId); // Find the user by their ID
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Delete the user from the database
+    await User.findByIdAndDelete(req.userId);
+
+    res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // Signup route
 router.post("/signup", async (req, res) => {
   const { username, email, password } = req.body;
