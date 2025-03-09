@@ -1,7 +1,8 @@
-const express = require("express");
+import express from "express";
+import Team from "../models/Team.js";
+import { userAuth, handleExceptions } from "./middleware.js";
+
 const router = express.Router();
-const Team = require("../models/Team");
-const { handleExceptions } = require("middleware.js");
 
 router.get("/all", handleExceptions, async (req, res) => {
   const teams = await Team.find(); // Fetch all users from the database
@@ -29,6 +30,29 @@ router.delete("/:id", handleExceptions, async (req, res) => {
   res.status(200).json({ message: "Team deleted successfully" });
 });
 
-router.post("/:id", handleExceptions, async (req, res) => {});
+router.post("/", handleExceptions, userAuth, async (req, res) => {
+  const newTeam = new Team({
+    ...req.body,
+    user: req.userId,
+  });
 
-router.put("/:id", handleExceptions, async (req, res) => {});
+  await newTeam.save();
+
+  res.status(200).json(newTeam);
+});
+
+router.put("/:id", handleExceptions, async (req, res) => {
+  const { name, players } = req.body;
+
+  const team = await Team.findById(req.teamId);
+
+  // { ...obj, name, players}
+
+  team.name = name || team.name;
+  team.players = players || team.players;
+  await team.save();
+
+  res.status(200).json(team);
+});
+
+export default router;
