@@ -15,9 +15,9 @@ const AuthForm = ({
       {showNameField && (
         <input
           type="text"
-          name="name"
-          value={formData.name}
-          placeholder="Name"
+          name="username"
+          value={formData.username}
+          placeholder="Userame"
           onChange={handleInputChange}
         />
       )}

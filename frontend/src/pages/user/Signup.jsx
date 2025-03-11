@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useUser } from "../../context/UserContext"; // Import the context
-import AuthForm from "../../components/forms/AuthForm";
+import AuthForm from "../../components/forms/AuthForm"; // Reuse the AuthForm component
 
 const Signup = () => {
   const { setCurrentUser } = useUser(); // Get the setCurrentUser function from context
   const [formData, setFormData] = useState({
-    name: "",
+    username: "", // Update to use 'username'
     email: "",
     password: "",
     confirmPassword: "", // Confirm password field for signup
@@ -26,30 +26,29 @@ const Signup = () => {
   const handleSubmit = async e => {
     e.preventDefault();
 
+    // Ensure the passwords match before sending the request
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
 
     try {
+      // Send the signup request to backend with updated field
       const response = await axios.post(
         "http://localhost:5000/api/users/signup",
-        formData
+        formData // 'username' is included here
       );
 
       const token = response.data.token;
-      localStorage.setItem("token", token);
+      localStorage.setItem("token", token); // Store the token
 
       // Fetch the logged-in user's profile
       const userResponse = await axios.get(
         "http://localhost:5000/api/users/profile",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // Set user data in context
-      setCurrentUser(userResponse.data);
+      setCurrentUser(userResponse.data); // Set user data in context
       navigate("/"); // Redirect to home page after successful signup
     } catch (err) {
       setError("Error creating account.");
