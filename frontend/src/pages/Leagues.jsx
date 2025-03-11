@@ -2,10 +2,10 @@ import React from "react";
 
 const Leagues = () => {
   return (
-    <div>
+    <main>
       <h2>Leagues</h2>
       <p>Here you can manage leagues.</p>
-    </div>
+    </main>
   );
 };
 
