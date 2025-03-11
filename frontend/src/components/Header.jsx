@@ -1,8 +1,8 @@
 const Header = () => {
   return (
-    <Header>
+    <header>
       <h1>Electric ABA</h1>
-    </Header>
+    </header>
   );
 };
 

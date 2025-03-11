@@ -1,4 +1,5 @@
 export { default as Divisions } from "./Divisions";
+export { default as Home } from "./Home";
 export { default as Leagues } from "./Leagues";
 export { default as Login } from "./Login";
 export { default as Players } from "./Players";

@@ -1,0 +1,36 @@
+// Global Styles
+$primary-color: #4caf50;
+$secondary-color: #333;
+$hover-color: #45a049;
+$active-color: #0056b3; // Darker Blue for active state
+
+
+nav {
+  display: flex;
+  justify-content: space-evenly; // Distribute links evenly
+  align-items: center; // Center links vertically
+  background-color: #333;
+  padding: 10px 20px;
+  
+  a {
+    display: block;
+    padding: 10px 20px;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    border: 2px solid transparent; // Set border as transparent initially
+    border-radius: 4px; // Rounded corners for the boxes
+    transition: all 0.3s ease-in-out; // Smooth transition on hover
+    
+    &:hover {
+      background-color: $primary-color; // Change background color on hover
+      border-color: $primary-color; // Add border color on hover
+    }
+
+    &.active {
+      background-color: $active-color; // Set background color for active state
+      color: white; // Change text color for active state
+      border-color: $active-color; // Add border color for active state
+    }
+  }
+}
