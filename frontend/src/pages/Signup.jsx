@@ -1,54 +1,38 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext"; // Import useUser hook
+import { createUser } from "../scripts/user";
 
 const Signup = () => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState(""); // New state for confirm password
+  // Define formData object to hold all credentials
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
   const [error, setError] = useState("");
   const { setCurrentUser } = useUser(); // Access setCurrentUser from context
   const navigate = useNavigate();
 
+  // Handle input change for form fields
+  const handleInputChange = e => {
+    const { name, value } = e.target; // Get the field name and value
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value, // Update the corresponding field dynamically
+    }));
+  };
+
   const handleSubmit = async e => {
     e.preventDefault();
 
-    // Check if passwords match
-    if (password !== confirmPassword) {
-      setError("Passwords do not match.");
-      return;
-    }
-
-    try {
-      // Send signup request
-      const response = await axios.post(
-        "http://localhost:5000/api/users/signup",
-        {
-          username,
-          email,
-          password,
-        }
-      );
-
-      const token = response.data.token;
-      localStorage.setItem("token", token); // Store token in localStorage
-
-      // Fetch the logged-in user's profile
-      const userResponse = await axios.get(
-        "http://localhost:5000/api/users/profile",
-        {
-          headers: { Authorization: `Bearer ${token}` }, // Ensure token is sent
-        }
-      );
-
-      setCurrentUser(userResponse.data); // Set user data in context
+    const onSuccess = userData => {
+      setCurrentUser(userData);
       navigate("/"); // Redirect to home after successful signup
-    } catch (err) {
-      setError("Invalid credentials or error logging in.");
-      console.error(err);
-    }
+    };
+
+    createUser(formData, onSuccess, setError);
   };
 
   return (
@@ -59,26 +43,30 @@ const Signup = () => {
         <input
           type="text"
           placeholder="Username"
-          value={username}
-          onChange={e => setUsername(e.target.value)}
+          name="username" // Match the name attribute to the formData key
+          value={formData.username}
+          onChange={handleInputChange}
         />
         <input
           type="email"
           placeholder="Email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
+          name="email" // Match the name attribute to the formData key
+          value={formData.email}
+          onChange={handleInputChange}
         />
         <input
           type="password"
           placeholder="Password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
+          name="password" // Match the name attribute to the formData key
+          value={formData.password}
+          onChange={handleInputChange}
         />
         <input
           type="password"
           placeholder="Confirm Password"
-          value={confirmPassword}
-          onChange={e => setConfirmPassword(e.target.value)} // Handle confirm password
+          name="confirmPassword" // Match the name attribute to the formData key
+          value={formData.confirmPassword}
+          onChange={handleInputChange} // Handle confirm password
         />
         <button type="submit">Sign Up</button>
       </form>
