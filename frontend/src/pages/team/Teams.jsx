@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-const TeamsList = () => {
+const Teams = () => {
   const [teams, setTeams] = useState([]);
+  const [players, setPlayers] = useState([]); // To store players the current user owns
   const [error, setError] = useState("");
   const [newTeam, setNewTeam] = useState({
     name: "",
@@ -12,44 +13,61 @@ const TeamsList = () => {
   });
 
   useEffect(() => {
-    // Fetch all teams when the component mounts
+    // Fetch all teams
     axios
       .get("http://localhost:5000/api/teams/all")
       .then(response => {
-        setTeams(response.data); // Update state with fetched teams
+        setTeams(response.data);
       })
       .catch(err => {
         setError("Error fetching teams.");
         console.error(err);
       });
-  }, []);
 
-  const handleDelete = teamId => {
-    // Send DELETE request to remove the team
+    // Fetch players owned by the logged-in user
     axios
-      .delete(`http://localhost:5000/api/teams/${teamId}`, {
+      .get("http://localhost:5000/api/players/owned", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
-      .then(() => {
-        setTeams(teams.filter(team => team._id !== teamId)); // Remove team from state
+      .then(response => {
+        setPlayers(response.data); // Set the players
       })
       .catch(err => {
-        setError("Error deleting team.");
+        setError("Error fetching players.");
         console.error(err);
       });
-  };
+  }, []);
 
   const handleInputChange = e => {
-    const { name, value } = e.target;
-    setNewTeam(prevState => ({
-      ...prevState,
-      [name]: value,
-    }));
+    const { name, value, checked } = e.target;
+
+    // Update the players array when a checkbox is checked/unchecked
+    if (name === "players") {
+      setNewTeam(prevState => {
+        if (checked) {
+          return {
+            ...prevState,
+            players: [...prevState.players, value], // Add player to array if checked
+          };
+        } else {
+          return {
+            ...prevState,
+            players: prevState.players.filter(playerId => playerId !== value), // Remove player if unchecked
+          };
+        }
+      });
+    } else {
+      setNewTeam(prevState => ({
+        ...prevState,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSubmit = e => {
     e.preventDefault();
 
+    // Ensure that players are being sent as an array of player IDs
     axios
       .post("http://localhost:5000/api/teams", newTeam, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -60,6 +78,21 @@ const TeamsList = () => {
       })
       .catch(err => {
         setError("Error creating team.");
+        console.error(err);
+      });
+  };
+
+  const handleDelete = teamId => {
+    // Send DELETE request to remove the team
+    axios
+      .delete(`http://localhost:5000/api/teams/${teamId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then(() => {
+        setTeams(teams.filter(team => team._id !== teamId)); // Remove team from the UI
+      })
+      .catch(err => {
+        setError("Error deleting team.");
         console.error(err);
       });
   };
@@ -88,7 +121,20 @@ const TeamsList = () => {
 
         <div>
           <h3>Select Players</h3>
-          {/* Render available players here */}
+          {players.map(player => (
+            <div key={player._id}>
+              <label>
+                <input
+                  type="checkbox"
+                  name="players"
+                  value={player._id} // Player ID as value
+                  checked={newTeam.players.includes(player._id)} // Check if player is selected
+                  onChange={handleInputChange}
+                />
+                {player.name}
+              </label>
+            </div>
+          ))}
         </div>
 
         <button type="submit">Add Team</button>
@@ -107,4 +153,4 @@ const TeamsList = () => {
   );
 };
 
-export default TeamsList;
+export default Teams;
