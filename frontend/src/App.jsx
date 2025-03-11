@@ -8,6 +8,8 @@ import { NavBar, Header, Footer } from "./components";
 import {
   Divisions,
   Home,
+  League,
+  LeagueEdit,
   Leagues,
   Login,
   Players,
@@ -34,7 +36,6 @@ const AppRoutes = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/profile" element={userAuth(<Profile />)} />
-      <Route path="/leagues" element={userAuth(<Leagues />)} />
       <Route path="/divisions" element={userAuth(<Divisions />)} />
 
       <Route path="/players" element={userAuth(<Players />)} />
@@ -44,6 +45,10 @@ const AppRoutes = () => {
       <Route path="/teams" element={userAuth(<Teams />)} />
       <Route path="/teams/:id" element={userAuth(<Team />)} />
       <Route path="/teams/:id/edit" element={userAuth(<TeamEdit />)} />
+
+      <Route path="/leagues" element={userAuth(<Leagues />)} />
+      <Route path="/leagues/:id" element={userAuth(<League />)} />
+      <Route path="/leagues/:id/edit" element={userAuth(<LeagueEdit />)} />
     </Routes>
   );
 };

@@ -5,6 +5,7 @@ import cors from "cors";
 import userRoutes from "./routes/user.js";
 import teamRoutes from "./routes/team.js";
 import playerRoutes from "./routes/player.js";
+import leagueRoutes from "./routes/league.js";
 
 dotenv.config();
 
@@ -28,6 +29,7 @@ app.use(express.json());
 app.use("/api/users", userRoutes);
 app.use("/api/teams", teamRoutes);
 app.use("/api/players", playerRoutes);
+app.use("/api/leagues", leagueRoutes);
 
 // Connect to MongoDB
 mongoose

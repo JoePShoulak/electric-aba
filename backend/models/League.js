@@ -1,5 +1,4 @@
-const mongoose = require("mongoose");
-
+import mongoose from "mongoose";
 const leagueSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
@@ -8,7 +7,6 @@ const leagueSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Division",
-        required: true,
       },
     ], // Reference to Team
   },
@@ -17,4 +15,4 @@ const leagueSchema = new mongoose.Schema(
 
 const League = mongoose.model("League", leagueSchema);
 
-module.exports = League;
+export default League;
