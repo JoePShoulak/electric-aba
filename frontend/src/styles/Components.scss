@@ -7,17 +7,20 @@ $active-color: #0056b3; // Darker Blue for active state
 
 header, footer {
   display: flex;
-  justify-content: center; // Center the content horizontally
-  align-items: center; // Center the content vertically
+  justify-content: center;
+  align-items: center;
   width: 100%;
   padding-top: 20px;
   padding-bottom: 20px;
   color: white;
   text-align: center;
+  background-color: $banner-color; // Same as NavBar, but can be customized
 }
 
-header {
-  background-color: $banner-color; // Same as NavBar, but can be customized
+header h1 {
+  font-size: 2rem; // Adjust the size as needed
+  font-weight: bold;
+  margin: 0;
 }
 
 footer {
@@ -27,20 +30,12 @@ footer {
   left: 0;
   width: 100%;
   box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1); // Optional: Add a subtle shadow for separation
-}
 
-// Header title (h1) styling
-header h1 {
-  font-size: 2rem; // Adjust the size as needed
-  font-weight: bold;
-  margin: 0;
-}
-
-// Footer text styling
-footer p {
-  margin: 0;
-  font-size: 1rem;
-  color: #fff; // Ensure text stands out on the darker footer background
+  p {
+    margin: 0;
+    font-size: 1rem;
+    color: #fff; // Ensure text stands out on the darker footer background
+  }
 }
 
 nav {
@@ -73,4 +68,63 @@ nav {
       border-color: $active-color; // Add border color for active state
     }
   }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Space between form elements */
+  max-width: 400px; /* Set a max width for the form */
+  margin: 20px auto; /* Center the form */
+  padding: 20px;
+  background-color: #fff; /* White background for the form */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for the form */
+}
+
+/* Style all inputs inside forms */
+form input {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd; /* Light gray border */
+  border-radius: 5px;
+  transition: border-color 0.3s ease;
+}
+
+form input:focus {
+  border-color: #007bff; /* Blue border on focus */
+  outline: none;
+}
+
+/* Style the submit button */
+form button {
+  padding: 12px;
+  font-size: 16px;
+  background-color: #007bff; /* Primary blue color */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+form button:hover {
+  background-color: #0056b3; /* Darker blue when hovering */
+}
+
+form button:active {
+  background-color: #003366; /* Even darker blue when the button is clicked */
+}
+
+/* Add spacing between the button and the last input */
+form button {
+  margin-top: 10px;
+}
+
+/* Style for form error messages */
+form p {
+  color: #ff4d4d; /* Red color for errors */
+  font-size: 14px;
+  margin: 0;
+  padding-top: 5px;
 }

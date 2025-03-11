@@ -78,7 +78,7 @@ const Players = () => {
   };
 
   return (
-    <div>
+    <main>
       <h2>Players</h2>
       {error && <p>{error}</p>}
 
@@ -147,7 +147,7 @@ const Players = () => {
           </li>
         ))}
       </ul>
-    </div>
+    </main>
   );
 };
 
