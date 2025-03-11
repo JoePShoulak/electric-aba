@@ -2,15 +2,21 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext"; // Import useUser hook
 import { createUser } from "../scripts/user";
+import {
+  EmailInput as Email,
+  PasswordConfirmInput as PassConfirm,
+  PasswordInput as Password,
+  UsernameInput as Username,
+} from "../components/FormInputs";
 
 const Signup = () => {
-  // Define formData object to hold all credentials
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
+
   const [error, setError] = useState("");
   const { setCurrentUser } = useUser(); // Access setCurrentUser from context
   const navigate = useNavigate();
@@ -40,33 +46,12 @@ const Signup = () => {
       <h2>Sign Up</h2>
       {error && <p>{error}</p>}
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Username"
-          name="username" // Match the name attribute to the formData key
-          value={formData.username}
-          onChange={handleInputChange}
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          name="email" // Match the name attribute to the formData key
-          value={formData.email}
-          onChange={handleInputChange}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          name="password" // Match the name attribute to the formData key
-          value={formData.password}
-          onChange={handleInputChange}
-        />
-        <input
-          type="password"
-          placeholder="Confirm Password"
-          name="confirmPassword" // Match the name attribute to the formData key
+        <Username value={formData.username} onChange={handleInputChange} />
+        <Email value={formData.email} onChange={handleInputChange} />
+        <Password value={formData.password} onChange={handleInputChange} />
+        <PassConfirm
           value={formData.confirmPassword}
-          onChange={handleInputChange} // Handle confirm password
+          onChange={handleInputChange}
         />
         <button type="submit">Sign Up</button>
       </form>
