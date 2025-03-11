@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import PlayerForm from "../../components/forms/PlayerForm";
 
 const PlayerEdit = () => {
   const { id } = useParams(); // Get the player ID from the URL
@@ -13,7 +14,6 @@ const PlayerEdit = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch the current player data for editing
     axios
       .get(`http://localhost:5000/api/players/${id}`)
       .then(response => {
@@ -43,11 +43,10 @@ const PlayerEdit = () => {
   const handleSubmit = e => {
     e.preventDefault();
 
-    // Send the updated player data to the server
     axios
       .put(`http://localhost:5000/api/players/${id}`, playerData)
       .then(() => {
-        navigate(`/players/${id}`); // Redirect back to the player profile after updating
+        navigate(`/players/${id}`);
       })
       .catch(err => {
         setError("Error updating player.");
@@ -59,44 +58,15 @@ const PlayerEdit = () => {
     <main>
       <h2>Edit Player</h2>
       {error && <p>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="name"
-          value={playerData.name}
-          placeholder="Player Name"
-          onChange={handleInputChange}
-        />
-        <input
-          type="text"
-          name="position"
-          value={playerData.position}
-          placeholder="Position"
-          onChange={handleInputChange}
-        />
-        <input
-          type="number"
-          name="points"
-          value={playerData.stats.points}
-          placeholder="Points"
-          onChange={handleInputChange}
-        />
-        <input
-          type="number"
-          name="assists"
-          value={playerData.stats.assists}
-          placeholder="Assists"
-          onChange={handleInputChange}
-        />
-        <input
-          type="number"
-          name="rebounds"
-          value={playerData.stats.rebounds}
-          placeholder="Rebounds"
-          onChange={handleInputChange}
-        />
-        <button type="submit">Update Player</button>
-      </form>
+
+      {/* Use the PlayerForm component */}
+      <PlayerForm
+        playerData={playerData}
+        handleInputChange={handleInputChange}
+        handleSubmit={handleSubmit}
+        error={error}
+        buttonText="Update Player"
+      />
     </main>
   );
 };

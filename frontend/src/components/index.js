@@ -8,4 +8,4 @@ export {
   UsernameInput,
   PasswordInput,
   PasswordConfirmInput,
-} from "./FormInputs";
+} from "./forms/UserInputs";

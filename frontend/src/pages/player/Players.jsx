@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import PlayerForm from "../../components/forms/PlayerForm";
 
 const Players = () => {
   const [players, setPlayers] = useState([]);
@@ -9,7 +10,7 @@ const Players = () => {
     name: "",
     position: "",
     stats: { points: 0, assists: 0, rebounds: 0 },
-    team: "", // Add a team selection field
+    team: "",
   });
 
   // Fetch all players
@@ -37,25 +38,22 @@ const Players = () => {
     e.preventDefault();
 
     try {
-      // Get token from localStorage
       const token = localStorage.getItem("token");
 
-      // Ensure the token exists before sending the request
       if (!token)
         return setError("You need to be logged in to create a player.");
 
-      // Send request to create a new player with the token in the Authorization header
       const response = await axios.post(
         "http://localhost:5000/api/players",
         newPlayer,
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Send the token as part of the Authorization header
+            Authorization: `Bearer ${token}`,
           },
         }
       );
 
-      setPlayers([...players, response.data]); // Update the players list with the new player
+      setPlayers([...players, response.data]);
       setNewPlayer({
         name: "",
         position: "",
@@ -68,77 +66,19 @@ const Players = () => {
     }
   };
 
-  const handleDelete = playerId => {
-    axios
-      .delete(`http://localhost:5000/api/players/${playerId}`)
-      .then(() => {
-        setPlayers(players.filter(player => player._id !== playerId)); // Remove player from state
-      })
-      .catch(err => {
-        setError("Error deleting player.");
-        console.error(err);
-      });
-  };
-
   return (
     <main>
       <h2>Players</h2>
       {error && <p>{error}</p>}
 
-      {/* Form to create a new player */}
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="name"
-          value={newPlayer.name}
-          placeholder="Player Name"
-          onChange={handleInputChange}
-        />
-        <input
-          type="text"
-          name="position"
-          value={newPlayer.position}
-          placeholder="Position"
-          onChange={handleInputChange}
-        />
-        <input
-          type="number"
-          name="points"
-          value={newPlayer.stats.points}
-          placeholder="Points"
-          onChange={e =>
-            setNewPlayer(prevState => ({
-              ...prevState,
-              stats: { ...prevState.stats, points: e.target.value },
-            }))
-          }
-        />
-        <input
-          type="number"
-          name="assists"
-          value={newPlayer.stats.assists}
-          placeholder="Assists"
-          onChange={e =>
-            setNewPlayer(prevState => ({
-              ...prevState,
-              stats: { ...prevState.stats, assists: e.target.value },
-            }))
-          }
-        />
-        <input
-          type="number"
-          name="rebounds"
-          value={newPlayer.stats.rebounds}
-          placeholder="Rebounds"
-          onChange={e =>
-            setNewPlayer(prevState => ({
-              ...prevState,
-              stats: { ...prevState.stats, rebounds: e.target.value },
-            }))
-          }
-        />
-        <button type="submit">Add Player</button>
-      </form>
+      {/* Use the PlayerForm component */}
+      <PlayerForm
+        playerData={newPlayer}
+        handleInputChange={handleInputChange}
+        handleSubmit={handleSubmit}
+        error={error}
+        buttonText="Add Player"
+      />
 
       <h2>My players</h2>
       {players.length > 0 ? (
@@ -148,7 +88,6 @@ const Players = () => {
               <Link to={`/players/${player._id}`}>
                 {player.name} ({player.position})
               </Link>
-              <button onClick={() => handleDelete(player._id)}>Delete</button>
             </li>
           ))}
         </ul>
