@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "../context/UserContext"; // Import useUser hook
-import { createUser } from "../scripts/user";
+import { useUser } from "../../context/UserContext"; // Import useUser hook
+import { createUser } from "../../scripts/user";
 import {
-  EmailInput as Email,
-  PasswordConfirmInput as PassConfirm,
-  PasswordInput as Password,
-  UsernameInput as Username,
-} from "../components/FormInputs";
+  EmailInput,
+  PasswordConfirmInput,
+  PasswordInput,
+  UsernameInput,
+} from "../../components/";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -46,10 +46,10 @@ const Signup = () => {
       <h2>Sign Up</h2>
       {error && <p>{error}</p>}
       <form onSubmit={handleSubmit}>
-        <Username value={formData.username} onChange={handleInputChange} />
-        <Email value={formData.email} onChange={handleInputChange} />
-        <Password value={formData.password} onChange={handleInputChange} />
-        <PassConfirm
+        <UsernameInput value={formData.username} onChange={handleInputChange} />
+        <EmailInput value={formData.email} onChange={handleInputChange} />
+        <PasswordInput value={formData.password} onChange={handleInputChange} />
+        <PasswordConfirmInput
           value={formData.confirmPassword}
           onChange={handleInputChange}
         />

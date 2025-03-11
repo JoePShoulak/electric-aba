@@ -14,6 +14,15 @@ router.get("/all", handleExceptions, async (req, res) => {
   }
 });
 
+router.get("/owned", handleExceptions, userAuth, async (req, res) => {
+  try {
+    const players = await Player.find({ user: req.userId }).populate("user"); // Filter players by userId
+    res.status(200).json(players);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching players." });
+  }
+});
+
 // Get single player by ID
 router.get("/:id", handleExceptions, async (req, res) => {
   try {

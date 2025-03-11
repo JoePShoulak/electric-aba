@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const Players = () => {
   const [players, setPlayers] = useState([]);
@@ -14,7 +15,9 @@ const Players = () => {
   // Fetch all players
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/players/all")
+      .get("http://localhost:5000/api/players/owned", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
       .then(response => setPlayers(response.data))
       .catch(err => {
         setError("Error fetching players.");
@@ -38,10 +41,8 @@ const Players = () => {
       const token = localStorage.getItem("token");
 
       // Ensure the token exists before sending the request
-      if (!token) {
-        setError("You need to be logged in to create a player.");
-        return;
-      }
+      if (!token)
+        return setError("You need to be logged in to create a player.");
 
       // Send request to create a new player with the token in the Authorization header
       const response = await axios.post(
@@ -67,14 +68,16 @@ const Players = () => {
     }
   };
 
-  const handleDelete = async playerId => {
-    try {
-      await axios.delete(`http://localhost:5000/api/players/${playerId}`);
-      setPlayers(players.filter(player => player._id !== playerId));
-    } catch (err) {
-      setError("Error deleting player.");
-      console.error(err);
-    }
+  const handleDelete = playerId => {
+    axios
+      .delete(`http://localhost:5000/api/players/${playerId}`)
+      .then(() => {
+        setPlayers(players.filter(player => player._id !== playerId)); // Remove player from state
+      })
+      .catch(err => {
+        setError("Error deleting player.");
+        console.error(err);
+      });
   };
 
   return (
@@ -137,16 +140,21 @@ const Players = () => {
         <button type="submit">Add Player</button>
       </form>
 
-      <ul>
-        {players.map(player => (
-          <li key={player._id}>
-            <span>
-              {player.name} ({player.position})
-            </span>
-            <button onClick={() => handleDelete(player._id)}>Delete</button>
-          </li>
-        ))}
-      </ul>
+      <h2>My players</h2>
+      {players.length > 0 ? (
+        <ul>
+          {players.map(player => (
+            <li key={player._id}>
+              <Link to={`/players/${player._id}`}>
+                {player.name} ({player.position})
+              </Link>
+              <button onClick={() => handleDelete(player._id)}>Delete</button>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No players, go ahead and make one!</p>
+      )}
     </main>
   );
 };

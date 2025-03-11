@@ -16,6 +16,8 @@ import {
   Teams,
 } from "./pages";
 import { UserProvider, useUser } from "./context/UserContext"; // Import UserProvider
+import Player from "./pages/player/Player";
+import PlayerEdit from "./pages/player/PlayerEdit";
 
 const AppRoutes = () => {
   const { currentUser } = useUser(); // Access currentUser from context
@@ -32,8 +34,15 @@ const AppRoutes = () => {
       <Route path="/profile" element={protectedRoute(<Profile />)} />
       <Route path="/leagues" element={protectedRoute(<Leagues />)} />
       <Route path="/divisions" element={protectedRoute(<Divisions />)} />
-      <Route path="/teams" element={protectedRoute(<Teams />)} />
+
       <Route path="/players" element={protectedRoute(<Players />)} />
+      <Route path="/players/:id" element={protectedRoute(<Player />)} />
+      <Route
+        path="/players/:id/edit"
+        element={protectedRoute(<PlayerEdit />)}
+      />
+
+      <Route path="/teams" element={protectedRoute(<Teams />)} />
     </Routes>
   );
 };

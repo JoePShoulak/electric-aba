@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
-import { useUser } from "../context/UserContext"; // Import the context
-import { loginUser } from "../scripts/user";
+import { useUser } from "../../context/UserContext"; // Import the context
+import { loginUser } from "../../scripts/user";
+import { EmailInput, PasswordInput } from "../../components";
 
 const Login = () => {
-  // Define formData to hold email and password
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -38,20 +38,8 @@ const Login = () => {
       <h2>Login</h2>
       {error && <p>{error}</p>}
       <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Email"
-          name="email" // Ensure the name attribute matches the key in formData
-          value={formData.email}
-          onChange={handleInputChange}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          name="password" // Ensure the name attribute matches the key in formData
-          value={formData.password}
-          onChange={handleInputChange}
-        />
+        <EmailInput value={formData.email} onChange={handleInputChange} />
+        <PasswordInput value={formData.password} onChange={handleInputChange} />
         <button type="submit">Log In</button>
       </form>
     </main>

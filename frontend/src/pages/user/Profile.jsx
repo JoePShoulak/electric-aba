@@ -1,4 +1,4 @@
-import { useUser } from "../context/UserContext"; // Import useUser from context
+import { useUser } from "../../context/UserContext"; // Import useUser from context
 
 const Profile = () => {
   const { currentUser } = useUser();
