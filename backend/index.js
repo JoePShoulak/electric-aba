@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import userRoutes from "./routes/user.js";
 import teamRoutes from "./routes/team.js";
+import playerRoutes from "./routes/player.js";
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use(express.json());
 // Use the user routes
 app.use("/api/users", userRoutes);
 app.use("/api/teams", teamRoutes);
+app.use("/api/players", playerRoutes);
 
 // Connect to MongoDB
 mongoose

@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const playerSchema = new mongoose.Schema(
   {
@@ -9,11 +9,11 @@ const playerSchema = new mongoose.Schema(
       assists: { type: Number, default: 0 },
       rebounds: { type: Number, default: 0 },
     },
-    team: { type: mongoose.Schema.Types.ObjectId, ref: "Team", required: true }, // Reference to Team
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Reference to User
   },
   { timestamps: true }
 );
 
 const Player = mongoose.model("Player", playerSchema);
 
-module.exports = Player;
+export default Player;
