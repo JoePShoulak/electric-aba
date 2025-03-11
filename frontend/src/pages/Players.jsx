@@ -1,6 +1,6 @@
 import React from "react";
 
-const PlayersPage = () => {
+const Players = () => {
   return (
     <div>
       <h2>Players</h2>
@@ -9,4 +9,4 @@ const PlayersPage = () => {
   );
 };
 
-export default PlayersPage;
+export default Players;

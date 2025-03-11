@@ -1,6 +1,6 @@
 import React from "react";
 
-const LeaguesPage = () => {
+const Leagues = () => {
   return (
     <div>
       <h2>Leagues</h2>
@@ -9,4 +9,4 @@ const LeaguesPage = () => {
   );
 };
 
-export default LeaguesPage;
+export default Leagues;

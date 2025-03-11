@@ -1,6 +1,6 @@
 import React from "react";
 
-const DivisionsPage = () => {
+const Divisions = () => {
   return (
     <div>
       <h2>Divisions</h2>
@@ -9,4 +9,4 @@ const DivisionsPage = () => {
   );
 };
 
-export default DivisionsPage;
+export default Divisions;

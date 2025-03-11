@@ -1,86 +1,52 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   BrowserRouter as Router,
   Route,
   Routes,
   Navigate,
 } from "react-router-dom";
-import axios from "axios";
 import NavBar from "./components/NavBar";
+import UserList from "./components/UserList";
 import Leagues from "./pages/Leagues";
 import Divisions from "./pages/Divisions";
 import Teams from "./pages/Teams";
 import Players from "./pages/Players";
-import Login from "./components/Login";
-import Signup from "./components/Signup";
-import UserList from "./components/UserList";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Profile from "./pages/Profile";
+import { UserProvider, useUser } from "./context/UserContext"; // Import UserProvider
 
 const App = () => {
-  const [currentUser, setCurrentUser] = useState(null);
+  return (
+    <UserProvider>
+      <Router>
+        <AppRoutes />
+      </Router>
+    </UserProvider>
+  );
+};
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      axios
-        .get("http://localhost:5000/api/users/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        .then(response => {
-          setCurrentUser(response.data);
-        })
-        .catch(() => {
-          localStorage.removeItem("token");
-          setCurrentUser(null);
-        });
-    }
-  }, []);
+const AppRoutes = () => {
+  const { currentUser } = useUser(); // Access the currentUser from context
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    setCurrentUser(null);
+  const protectedRoute = element => {
+    return currentUser ? element : <Navigate to="/login" replace />;
   };
 
   return (
-    <Router>
-      <NavBar currentUser={currentUser} logout={logout} />
-      <div>
-        <Routes>
-          <Route
-            path="/login"
-            element={<Login setCurrentUser={setCurrentUser} />}
-          />
-          <Route
-            path="/signup"
-            element={<Signup setCurrentUser={setCurrentUser} />}
-          />
-
-          <Route
-            path="/leagues"
-            element={
-              currentUser ? <Leagues /> : <Navigate to="/login" replace />
-            }
-          />
-          <Route
-            path="/divisions"
-            element={
-              currentUser ? <Divisions /> : <Navigate to="/login" replace />
-            }
-          />
-          <Route
-            path="/teams"
-            element={currentUser ? <Teams /> : <Navigate to="/login" replace />}
-          />
-          <Route
-            path="/players"
-            element={
-              currentUser ? <Players /> : <Navigate to="/login" replace />
-            }
-          />
-
-          <Route path="/" element={<UserList />} />
-        </Routes>
-      </div>
-    </Router>
+    <div>
+      <NavBar />
+      <Routes>
+        <Route path="/" element={<UserList />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/leagues" element={protectedRoute(<Leagues />)} />
+        <Route path="/divisions" element={protectedRoute(<Divisions />)} />
+        <Route path="/teams" element={protectedRoute(<Teams />)} />
+        <Route path="/players" element={protectedRoute(<Players />)} />
+        <Route path="/profile" element={protectedRoute(<Profile />)} />
+      </Routes>
+    </div>
   );
 };
 
