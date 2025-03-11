@@ -1,9 +1,47 @@
 // Global Styles
 $primary-color: #4caf50;
 $secondary-color: #333;
+$banner-color: #222;
 $hover-color: #45a049;
 $active-color: #0056b3; // Darker Blue for active state
 
+header, footer {
+  display: flex;
+  justify-content: center; // Center the content horizontally
+  align-items: center; // Center the content vertically
+  width: 100%;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  color: white;
+  text-align: center;
+}
+
+header {
+  background-color: $banner-color; // Same as NavBar, but can be customized
+}
+
+footer {
+  background-color: $banner-color; // Slightly darker blue for footer
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1); // Optional: Add a subtle shadow for separation
+}
+
+// Header title (h1) styling
+.header h1 {
+  font-size: 2rem; // Adjust the size as needed
+  font-weight: bold;
+  margin: 0;
+}
+
+// Footer text styling
+.footer p {
+  margin: 0;
+  font-size: 1rem;
+  color: #fff; // Ensure text stands out on the darker footer background
+}
 
 nav {
   display: flex;
