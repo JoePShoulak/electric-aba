@@ -1,31 +1,32 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import TeamForm from "../../components/forms/TeamForm";
 
 const TeamEdit = () => {
   const { id } = useParams(); // Get the team ID from the URL
   const [teamData, setTeamData] = useState({
     name: "",
     city: "",
-    players: [], // Players that are currently part of the team
+    players: [],
   });
-  const [availablePlayers, setAvailablePlayers] = useState([]); // Players the user owns
+  const [availablePlayers, setAvailablePlayers] = useState([]); // Players owned by the user
   const [error, setError] = useState("");
-  const navigate = useNavigate(); // Use navigate to redirect after saving
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch the team data
+    // Fetch team data for editing
     axios
       .get(`http://localhost:5000/api/teams/${id}`)
       .then(response => {
-        setTeamData(response.data); // Set the team data
+        setTeamData(response.data);
       })
       .catch(err => {
         setError("Error fetching team details.");
         console.error(err);
       });
 
-    // Fetch players owned by the logged-in user
+    // Fetch players the user owns
     axios
       .get("http://localhost:5000/api/players/owned", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -42,18 +43,18 @@ const TeamEdit = () => {
   const handleInputChange = e => {
     const { name, value, checked } = e.target;
 
-    // Update the players array when a checkbox is checked/unchecked
+    // Update players array when a checkbox is checked/unchecked
     if (name === "players") {
       setTeamData(prevState => {
         if (checked) {
           return {
             ...prevState,
-            players: [...prevState.players, value], // Add player to array if checked
+            players: [...prevState.players, value],
           };
         } else {
           return {
             ...prevState,
-            players: prevState.players.filter(playerId => playerId !== value), // Remove player if unchecked
+            players: prevState.players.filter(playerId => playerId !== value),
           };
         }
       });
@@ -73,7 +74,7 @@ const TeamEdit = () => {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then(() => {
-        navigate(`/teams/${id}`); // Redirect to the team profile page
+        navigate(`/teams/${id}`); // Redirect back to the team profile
       })
       .catch(err => {
         setError("Error updating team.");
@@ -85,42 +86,16 @@ const TeamEdit = () => {
     <main>
       <h2>Edit Team</h2>
       {error && <p>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="name"
-          value={teamData.name}
-          placeholder="Team Name"
-          onChange={handleInputChange}
-        />
-        <input
-          type="text"
-          name="city"
-          value={teamData.city}
-          placeholder="City"
-          onChange={handleInputChange}
-        />
 
-        <div>
-          <h3>Select Players</h3>
-          {availablePlayers.map(player => (
-            <div key={player._id}>
-              <label>
-                <input
-                  type="checkbox"
-                  name="players"
-                  value={player._id} // Player ID as value
-                  checked={teamData.players.includes(player._id)} // Pre-select the players who are part of the team
-                  onChange={handleInputChange}
-                />
-                {player.name}
-              </label>
-            </div>
-          ))}
-        </div>
-
-        <button type="submit">Update Team</button>
-      </form>
+      {/* Use the TeamForm component */}
+      <TeamForm
+        teamData={teamData}
+        handleInputChange={handleInputChange}
+        handleSubmit={handleSubmit}
+        error={error}
+        players={availablePlayers}
+        buttonText="Update Team"
+      />
     </main>
   );
 };
