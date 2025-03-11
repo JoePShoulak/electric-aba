@@ -5,15 +5,16 @@ import {
   Routes,
   Navigate,
 } from "react-router-dom";
-import NavBar from "./components/NavBar";
-import UserList from "./components/UserList";
-import Leagues from "./pages/Leagues";
-import Divisions from "./pages/Divisions";
-import Teams from "./pages/Teams";
-import Players from "./pages/Players";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import Profile from "./pages/Profile";
+import { NavBar, UserList, Header, Footer } from "./components";
+import {
+  Divisions,
+  Leagues,
+  Login,
+  Players,
+  Profile,
+  Signup,
+  Teams,
+} from "./pages";
 import { UserProvider, useUser } from "./context/UserContext"; // Import UserProvider
 
 const App = () => {
@@ -27,7 +28,7 @@ const App = () => {
 };
 
 const AppRoutes = () => {
-  const { currentUser } = useUser(); // Access the currentUser from context
+  const { currentUser } = useUser(); // Access currentUser from context
 
   const protectedRoute = element => {
     return currentUser ? element : <Navigate to="/login" replace />;
@@ -40,11 +41,11 @@ const AppRoutes = () => {
         <Route path="/" element={<UserList />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/profile" element={protectedRoute(<Profile />)} />
         <Route path="/leagues" element={protectedRoute(<Leagues />)} />
         <Route path="/divisions" element={protectedRoute(<Divisions />)} />
         <Route path="/teams" element={protectedRoute(<Teams />)} />
         <Route path="/players" element={protectedRoute(<Players />)} />
-        <Route path="/profile" element={protectedRoute(<Profile />)} />
       </Routes>
     </div>
   );

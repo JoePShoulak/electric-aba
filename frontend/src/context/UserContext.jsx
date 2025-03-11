@@ -1,13 +1,15 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
 import axios from "axios";
 
-// Create a Context for user data
+// Create the UserContext
 const UserContext = createContext();
 
+// Create the custom hook to use the UserContext
 export const useUser = () => {
-  return useContext(UserContext); // Custom hook to use the UserContext
+  return useContext(UserContext);
 };
 
+// UserProvider component to provide the context value to the rest of the app
 export const UserProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
 
