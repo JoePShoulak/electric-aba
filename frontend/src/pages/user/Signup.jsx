@@ -1,60 +1,74 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "../../context/UserContext"; // Import useUser hook
-import { createUser } from "../../scripts/user";
-import {
-  EmailInput,
-  PasswordConfirmInput,
-  PasswordInput,
-  UsernameInput,
-} from "../../components/";
+import axios from "axios";
+import { useUser } from "../../context/UserContext"; // Import the context
+import AuthForm from "../../components/forms/AuthForm";
 
 const Signup = () => {
+  const { setCurrentUser } = useUser(); // Get the setCurrentUser function from context
   const [formData, setFormData] = useState({
-    username: "",
+    name: "",
     email: "",
     password: "",
-    confirmPassword: "",
+    confirmPassword: "", // Confirm password field for signup
   });
-
   const [error, setError] = useState("");
-  const { setCurrentUser } = useUser(); // Access setCurrentUser from context
   const navigate = useNavigate();
 
-  // Handle input change for form fields
   const handleInputChange = e => {
-    const { name, value } = e.target; // Get the field name and value
-    setFormData(prevData => ({
-      ...prevData,
-      [name]: value, // Update the corresponding field dynamically
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value,
     }));
   };
 
   const handleSubmit = async e => {
     e.preventDefault();
 
-    const onSuccess = userData => {
-      setCurrentUser(userData);
-      navigate("/"); // Redirect to home after successful signup
-    };
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
 
-    createUser(formData, onSuccess, setError);
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/users/signup",
+        formData
+      );
+
+      const token = response.data.token;
+      localStorage.setItem("token", token);
+
+      // Fetch the logged-in user's profile
+      const userResponse = await axios.get(
+        "http://localhost:5000/api/users/profile",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      // Set user data in context
+      setCurrentUser(userResponse.data);
+      navigate("/"); // Redirect to home page after successful signup
+    } catch (err) {
+      setError("Error creating account.");
+      console.error(err);
+    }
   };
 
   return (
     <main>
       <h2>Sign Up</h2>
-      {error && <p>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <UsernameInput value={formData.username} onChange={handleInputChange} />
-        <EmailInput value={formData.email} onChange={handleInputChange} />
-        <PasswordInput value={formData.password} onChange={handleInputChange} />
-        <PasswordConfirmInput
-          value={formData.confirmPassword}
-          onChange={handleInputChange}
-        />
-        <button type="submit">Sign Up</button>
-      </form>
+      <AuthForm
+        formData={formData}
+        handleInputChange={handleInputChange}
+        handleSubmit={handleSubmit}
+        error={error}
+        buttonText="Sign Up"
+        showConfirmPasswordField={true} // Show confirm password field for signup
+        showNameField={true} // Show the name field for signup
+      />
     </main>
   );
 };
