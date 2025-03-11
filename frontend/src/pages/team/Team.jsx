@@ -23,7 +23,7 @@ const Team = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div>
+    <main>
       {team ? (
         <>
           <h2>{team.name}</h2>
@@ -41,7 +41,7 @@ const Team = () => {
       ) : (
         <p>Loading team details...</p>
       )}
-    </div>
+    </main>
   );
 };
 

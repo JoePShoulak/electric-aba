@@ -32,15 +32,19 @@ router.post("/", handleExceptions, userAuth, async (req, res) => {
   try {
     const { name, city, players } = req.body;
 
+    // Ensure that the userId is attached from the authentication middleware
     const newTeam = new Team({
       name,
       city,
+      user: req.userId, // Add the user ID from the authenticated user
       players, // Players can be passed when creating a team
     });
+
     await newTeam.save();
-    res.status(201).json(newTeam);
+    res.status(201).json(newTeam); // Return the newly created team
   } catch (error) {
     res.status(500).json({ message: "Error creating team." });
+    console.error(error);
   }
 });
 

@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 
 const TeamsList = () => {
   const [teams, setTeams] = useState([]);
-  const [players, setPlayers] = useState([]); // To store players the current user owns
   const [error, setError] = useState("");
   const [newTeam, setNewTeam] = useState({
     name: "",
@@ -13,55 +12,39 @@ const TeamsList = () => {
   });
 
   useEffect(() => {
-    // Fetch all teams
+    // Fetch all teams when the component mounts
     axios
       .get("http://localhost:5000/api/teams/all")
       .then(response => {
-        setTeams(response.data);
+        setTeams(response.data); // Update state with fetched teams
       })
       .catch(err => {
         setError("Error fetching teams.");
         console.error(err);
       });
-
-    // Fetch players owned by the logged-in user
-    axios
-      .get("http://localhost:5000/api/players/owned", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then(response => {
-        setPlayers(response.data); // Set the players
-      })
-      .catch(err => {
-        setError("Error fetching players.");
-        console.error(err);
-      });
   }, []);
 
-  const handleInputChange = e => {
-    const { name, value, checked } = e.target;
-
-    // Update the players array when a checkbox is checked/unchecked
-    if (name === "players") {
-      setNewTeam(prevState => {
-        if (checked) {
-          return {
-            ...prevState,
-            players: [...prevState.players, value], // Add player to array if checked
-          };
-        } else {
-          return {
-            ...prevState,
-            players: prevState.players.filter(playerId => playerId !== value), // Remove player if unchecked
-          };
-        }
+  const handleDelete = teamId => {
+    // Send DELETE request to remove the team
+    axios
+      .delete(`http://localhost:5000/api/teams/${teamId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then(() => {
+        setTeams(teams.filter(team => team._id !== teamId)); // Remove team from state
+      })
+      .catch(err => {
+        setError("Error deleting team.");
+        console.error(err);
       });
-    } else {
-      setNewTeam(prevState => ({
-        ...prevState,
-        [name]: value,
-      }));
-    }
+  };
+
+  const handleInputChange = e => {
+    const { name, value } = e.target;
+    setNewTeam(prevState => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = e => {
@@ -82,7 +65,7 @@ const TeamsList = () => {
   };
 
   return (
-    <div>
+    <main>
       <h2>Teams</h2>
       {error && <p>{error}</p>}
 
@@ -105,34 +88,22 @@ const TeamsList = () => {
 
         <div>
           <h3>Select Players</h3>
-          {players.map(player => (
-            <div key={player._id}>
-              <label>
-                <input
-                  type="checkbox"
-                  name="players"
-                  value={player._id} // Player ID as value
-                  checked={newTeam.players.includes(player._id)} // Check if player is selected
-                  onChange={handleInputChange}
-                />
-                {player.name}
-              </label>
-            </div>
-          ))}
+          {/* Render available players here */}
         </div>
 
         <button type="submit">Add Team</button>
       </form>
 
-      {/* List of teams */}
+      {/* List of teams with delete button */}
       <ul>
         {teams.map(team => (
           <li key={team._id}>
             <Link to={`/teams/${team._id}`}>{team.name}</Link>
+            <button onClick={() => handleDelete(team._id)}>Delete</button>
           </li>
         ))}
       </ul>
-    </div>
+    </main>
   );
 };
 

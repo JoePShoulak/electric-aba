@@ -13,6 +13,8 @@ import {
   Players,
   Profile,
   Signup,
+  Team,
+  TeamEdit,
   Teams,
 } from "./pages";
 import { UserProvider, useUser } from "./context/UserContext"; // Import UserProvider
@@ -22,7 +24,7 @@ import PlayerEdit from "./pages/player/PlayerEdit";
 const AppRoutes = () => {
   const { currentUser } = useUser(); // Access currentUser from context
 
-  const protectedRoute = element => {
+  const userAuth = element => {
     return currentUser ? element : <Navigate to="/login" replace />;
   };
 
@@ -31,18 +33,17 @@ const AppRoutes = () => {
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
-      <Route path="/profile" element={protectedRoute(<Profile />)} />
-      <Route path="/leagues" element={protectedRoute(<Leagues />)} />
-      <Route path="/divisions" element={protectedRoute(<Divisions />)} />
+      <Route path="/profile" element={userAuth(<Profile />)} />
+      <Route path="/leagues" element={userAuth(<Leagues />)} />
+      <Route path="/divisions" element={userAuth(<Divisions />)} />
 
-      <Route path="/players" element={protectedRoute(<Players />)} />
-      <Route path="/players/:id" element={protectedRoute(<Player />)} />
-      <Route
-        path="/players/:id/edit"
-        element={protectedRoute(<PlayerEdit />)}
-      />
+      <Route path="/players" element={userAuth(<Players />)} />
+      <Route path="/players/:id" element={userAuth(<Player />)} />
+      <Route path="/players/:id/edit" element={userAuth(<PlayerEdit />)} />
 
-      <Route path="/teams" element={protectedRoute(<Teams />)} />
+      <Route path="/teams" element={userAuth(<Teams />)} />
+      <Route path="/teams/:id" element={userAuth(<Team />)} />
+      <Route path="/teams/:id/edit" element={userAuth(<TeamEdit />)} />
     </Routes>
   );
 };
