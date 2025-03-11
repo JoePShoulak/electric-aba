@@ -8,7 +8,6 @@ const playerSchema = new mongoose.Schema(
       points: { type: Number, default: 0 },
       assists: { type: Number, default: 0 },
       rebounds: { type: Number, default: 0 },
-      // Add other stats as needed
     },
     team: { type: mongoose.Schema.Types.ObjectId, ref: "Team", required: true }, // Reference to Team
   },

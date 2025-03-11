@@ -19,9 +19,9 @@ router.get("/:id", handleExceptions, async (req, res) => {
 });
 
 router.delete("/:id", handleExceptions, async (req, res) => {
-  const team = await Team.findById(req.teamId); // Find the user by their ID
+  const team = await Team.findById(req.teamId); // Find the team by their ID
   if (!team) {
-    return res.status(404).json({ message: "User not found" });
+    return res.status(404).json({ message: "Team not found" });
   }
 
   // Delete the user from the database
