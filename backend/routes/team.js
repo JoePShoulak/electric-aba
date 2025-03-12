@@ -5,12 +5,19 @@ import { userAuth, handleExceptions } from "./middleware.js";
 const router = express.Router();
 
 // Get all teams
-router.get("/all", handleExceptions, async (req, res) => {
+router.get("/all", handleExceptions, userAuth, async (req, res) => {
   try {
+    // Fetch teams that are associated with the logged-in user
     const teams = await Team.find({ user: req.userId }).populate("players"); // Populate player details
-    res.status(200).json(teams);
+
+    if (!teams || teams.length === 0) {
+      return res.status(404).json({ message: "No teams found for this user." });
+    }
+
+    res.status(200).json(teams); // Return the list of teams
   } catch (error) {
     res.status(500).json({ message: "Error fetching teams." });
+    console.error(error);
   }
 });
 

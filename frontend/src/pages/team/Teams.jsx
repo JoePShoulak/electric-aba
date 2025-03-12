@@ -16,7 +16,9 @@ const Teams = () => {
   // Fetch all teams and players
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/teams/all")
+      .get("http://localhost:5000/api/teams/all", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
       .then(response => {
         setTeams(response.data);
       })
