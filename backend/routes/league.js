@@ -8,10 +8,13 @@ const router = express.Router();
 // Get all leagues created by the logged-in user
 router.get("/all", handleExceptions, userAuth, async (req, res) => {
   try {
-    const leagues = await League.find({ user: req.userId }).populate("seasons"); // Fetch leagues for the current user
-    res.status(200).json(leagues); // Return the leagues
+    // Fetch leagues for the current user and populate the seasons with full data
+    const leagues = await League.find({ user: req.userId }).populate("seasons"); // Populate the seasons field with full Season documents
+    res.status(200).json(leagues); // Return the populated leagues
   } catch (error) {
-    res.status(500).json({ message: "Error fetching leagues." });
+    res
+      .status(500)
+      .json({ message: "Error fetching leagues.", error: error.message });
   }
 });
 
@@ -37,7 +40,7 @@ router.post("/:id/season", handleExceptions, userAuth, async (req, res) => {
 });
 
 // Get single league by ID (this can be accessed by any user if they know the ID)
-router.get("/season/:id", handleExceptions, async (req, res) => {
+router.get("/seasons/:id", handleExceptions, async (req, res) => {
   try {
     const season = await Season.findById(req.params.id).populate("league");
     if (!season) {
@@ -52,7 +55,9 @@ router.get("/season/:id", handleExceptions, async (req, res) => {
 // Get single league by ID (this can be accessed by any user if they know the ID)
 router.get("/:id", handleExceptions, async (req, res) => {
   try {
-    const league = await League.findById(req.params.id).populate("user");
+    const league = await League.findById(req.params.id)
+      .populate("user")
+      .populate("seasons");
     if (!league) {
       return res.status(404).json({ message: "League not found" });
     }

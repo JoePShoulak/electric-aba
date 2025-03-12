@@ -2,82 +2,46 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, Link } from "react-router-dom";
 
-const Season = ({ data }) => {
-  return (
-    <>
-      <h3>Current Season</h3>
-      <p>Year: {data.year}</p>
-    </>
-  );
+// Helper function to fetch the league details
+const fetchLeague = (id, setError, setLeague) => {
+  axios
+    .get(`http://localhost:5000/api/leagues/${id}`)
+    .then(response => {
+      setLeague(response.data);
+      console.log(response.data);
+    })
+    .catch(err => {
+      setError("Error fetching league details.");
+      console.error(err);
+    });
 };
+
+const SeasonList = ({ seasons }) => (
+  <div>
+    <h3>Seasons</h3>
+    <ul>
+      {seasons && seasons.length > 0 ? (
+        seasons.map((season, index) => (
+          <li key={index}>
+            <Link to={`/leagues/seasons/${season._id}`}>
+              Season {season.year}
+            </Link>
+          </li>
+        ))
+      ) : (
+        <p>No seasons available.</p>
+      )}
+    </ul>
+  </div>
+);
 
 const League = () => {
   const { id } = useParams();
   const [league, setLeague] = useState({});
   const [error, setError] = useState("");
 
-  const [seasonData, setSeasonData] = useState({});
-
-  const play = () => {
-    console.log(league.seasons);
-    console.log(seasonData);
-    const currentSeasonId = league.seasons.find(s => !s.complete);
-
-    if (!currentSeasonId) {
-      const year =
-        league.seasons.length == 0
-          ? league.foundingYear
-          : league.seasons.sort(s => s.year)[0].year;
-
-      axios
-        .post(
-          `http://localhost:5000/api/leagues/${id}/season`,
-          {
-            league: id,
-            year,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            }, // Include token for authentication
-          }
-        )
-        .then(response => {
-          setSeasonData(response.data);
-          refreshLeague(id);
-        })
-        .catch(err => {
-          setError("Error creating season.");
-          console.error(err);
-        });
-    } else {
-      axios
-        .get(`http://localhost:5000/api/leagues/season/${currentSeasonId}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          }, // Include token for authentication
-        })
-        .then(response => setSeasonData(response.data))
-        .catch(err => {
-          setError("Error loading season.");
-          console.error(err);
-        });
-    }
-  };
-
-  const refreshLeague = id => {
-    axios
-      .get(`http://localhost:5000/api/leagues/${id}`)
-      .then(response => setLeague(response.data))
-      .catch(err => {
-        setError("Error fetching league details.");
-        console.error(err);
-      });
-  };
-
   useEffect(() => {
-    // Fetch the league details
-    refreshLeague(id);
+    fetchLeague(id, setError, setLeague);
   }, [id]);
 
   return (
@@ -91,17 +55,15 @@ const League = () => {
       <h4>Divisions:</h4>
       <ul>
         {league.divs && league.divs.length > 0 ? (
-          league.divs.map(div => <li key={div._id}>{div.name}</li>)
+          league.divs.map((div, index) => <li key={index}>{div.name}</li>)
         ) : (
           <p>No divisions assigned.</p>
         )}
       </ul>
 
       <Link to={`/leagues/${league._id}/edit`}>Edit League</Link>
-      <br />
-      <button onClick={play}>Play!</button>
 
-      {seasonData && <Season data={seasonData} />}
+      <SeasonList seasons={league.seasons} />
     </main>
   );
 };

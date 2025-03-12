@@ -24,6 +24,7 @@ import {
 import { UserProvider, useUser } from "./context/UserContext"; // Import UserProvider
 import Player from "./pages/player/Player";
 import PlayerEdit from "./pages/player/PlayerEdit";
+import { Season } from "./pages/league";
 
 const AppRoutes = () => {
   const { currentUser } = useUser(); // Access currentUser from context
@@ -48,13 +49,14 @@ const AppRoutes = () => {
       <Route path="/teams/:id" element={userAuth(<Team />)} />
       <Route path="/teams/:id/edit" element={userAuth(<TeamEdit />)} />
 
-      <Route path="/leagues" element={userAuth(<Leagues />)} />
-      <Route path="/leagues/:id" element={userAuth(<League />)} />
-      <Route path="/leagues/:id/edit" element={userAuth(<LeagueEdit />)} />
-
       <Route path="/divisions" element={userAuth(<Divisions />)} />
       <Route path="/divisions/:id" element={userAuth(<Division />)} />
       <Route path="/divisions/:id/edit" element={userAuth(<DivisionEdit />)} />
+
+      <Route path="/leagues" element={userAuth(<Leagues />)} />
+      <Route path="/leagues/:id" element={userAuth(<League />)} />
+      <Route path="/leagues/:id/edit" element={userAuth(<LeagueEdit />)} />
+      <Route path="/leagues/seasons/:id" element={userAuth(<Season />)} />
     </Routes>
   );
 };
