@@ -1,14 +1,61 @@
 // TeamForm.js
 import React from "react";
 
+const randomNames = [
+  "Lakers",
+  "Warriors",
+  "Celtics",
+  "Bulls",
+  "Heat",
+  "Spurs",
+  "Rockets",
+  "Nets",
+  "Clippers",
+  "Suns",
+];
+
+const randomCities = [
+  "Los Angeles",
+  "San Francisco",
+  "Boston",
+  "Chicago",
+  "Miami",
+  "San Antonio",
+  "Houston",
+  "Brooklyn",
+  "Los Angeles",
+  "Phoenix",
+];
+
 const TeamForm = ({
   teamData,
+  setTeamData,
   handleInputChange,
   handleSubmit,
   error,
   players,
   buttonText,
 }) => {
+  const randomize = e => {
+    e.preventDefault();
+
+    const randomPlayers = [];
+    while (randomPlayers.length < 10) {
+      const randomPlayer = players[Math.floor(Math.random() * players.length)];
+      if (!randomPlayers.includes(randomPlayer._id)) {
+        randomPlayers.push(randomPlayer._id);
+      }
+    }
+
+    const randomTeam = {
+      name: randomNames[Math.floor(Math.random() * randomNames.length)],
+      city: randomCities[Math.floor(Math.random() * randomCities.length)],
+      players: randomPlayers,
+    };
+
+    setTeamData(randomTeam);
+  };
+
   return (
     <form onSubmit={handleSubmit}>
       <input
@@ -46,6 +93,7 @@ const TeamForm = ({
 
       {error && <p>{error}</p>}
       <button type="submit">{buttonText}</button>
+      <button onClick={randomize}>Random</button>
     </form>
   );
 };

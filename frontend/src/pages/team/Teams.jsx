@@ -91,6 +91,7 @@ const Teams = () => {
       {/* Use the TeamForm component */}
       <TeamForm
         teamData={newTeam}
+        setTeamData={setNewTeam}
         handleInputChange={handleInputChange}
         handleSubmit={handleSubmit}
         error={error}
