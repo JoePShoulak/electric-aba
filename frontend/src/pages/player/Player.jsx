@@ -21,6 +21,25 @@ const Player = () => {
       });
   }, [id]);
 
+  const handleDelete = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return setError("You need to be logged in to delete a player.");
+    }
+
+    axios
+      .delete(`http://localhost:5000/api/players/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then(() => {
+        navigate("/players"); // Redirect to the players list after deletion
+      })
+      .catch(err => {
+        setError("Error deleting player.");
+        console.error(err);
+      });
+  };
+
   if (error) return <p>{error}</p>;
 
   return (
@@ -35,6 +54,7 @@ const Player = () => {
           <button onClick={() => navigate(`/players/${id}/edit`)}>
             Edit Player
           </button>
+          <button onClick={handleDelete}>Delete Player</button>{" "}
         </>
       ) : (
         <p>Loading player details...</p>

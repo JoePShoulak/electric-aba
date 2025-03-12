@@ -39,9 +39,30 @@ const League = () => {
   const [league, setLeague] = useState({});
   const [error, setError] = useState("");
 
+  // Fetch league details when the component mounts
   useEffect(() => {
     fetchLeague(id, setError, setLeague);
   }, [id]);
+
+  // Handle deleting the league
+  const handleDelete = () => {
+    const token = localStorage.getItem("token");
+    if (!token) return setError("You need to be logged in to delete a league.");
+
+    axios
+      .delete(`http://localhost:5000/api/leagues/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then(() => {
+        // Redirect user after deletion
+        alert("League deleted successfully!");
+        window.location.href = "/leagues"; // Redirect back to the leagues list
+      })
+      .catch(err => {
+        setError("Error deleting league.");
+        console.error(err);
+      });
+  };
 
   return (
     <main>
@@ -61,6 +82,9 @@ const League = () => {
       </ul>
 
       <Link to={`/leagues/${league._id}/edit`}>Edit League</Link>
+
+      {/* Delete Button */}
+      <button onClick={handleDelete}>Delete League</button>
 
       <SeasonList seasons={league.seasons} />
     </main>

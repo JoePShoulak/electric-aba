@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 
 const Team = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // Get the team ID from the URL
   const [team, setTeam] = useState(null);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -19,6 +19,25 @@ const Team = () => {
         console.error(err);
       });
   }, [id]);
+
+  const handleDelete = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return setError("You need to be logged in to delete a team.");
+    }
+
+    axios
+      .delete(`http://localhost:5000/api/teams/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then(() => {
+        navigate("/teams"); // Redirect to the teams list after deletion
+      })
+      .catch(err => {
+        setError("Error deleting team.");
+        console.error(err);
+      });
+  };
 
   if (error) return <p>{error}</p>;
 
@@ -37,6 +56,7 @@ const Team = () => {
           <button onClick={() => navigate(`/teams/${id}/edit`)}>
             Edit Team
           </button>
+          <button onClick={handleDelete}>Delete Team</button>{" "}
         </>
       ) : (
         <p>Loading team details...</p>

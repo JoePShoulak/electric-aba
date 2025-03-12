@@ -66,7 +66,6 @@ const Leagues = () => {
     }));
   };
 
-  // Handle the form submission for creating a new league
   const handleSubmit = e => {
     e.preventDefault();
 
@@ -96,24 +95,6 @@ const Leagues = () => {
       });
   };
 
-  // Handle deleting a league
-  const handleDelete = leagueId => {
-    const token = localStorage.getItem("token");
-    if (!token) return setError("You need to be logged in to delete a league.");
-
-    axios
-      .delete(`http://localhost:5000/api/leagues/${leagueId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then(() => {
-        setLeagues(leagues.filter(league => league._id !== leagueId)); // Remove the league from the list
-      })
-      .catch(err => {
-        setError("Error deleting league.");
-        console.error(err);
-      });
-  };
-
   return (
     <main>
       <h2>Leagues</h2>
@@ -133,7 +114,6 @@ const Leagues = () => {
           leagues.map(league => (
             <li key={league._id}>
               <Link to={`/leagues/${league._id}`}>{league.name}</Link>
-              <button onClick={() => handleDelete(league._id)}>Delete</button>
             </li>
           ))
         ) : (
