@@ -5,6 +5,7 @@ const DivisionForm = ({
   handleInputChange,
   handleSubmit,
   buttonText,
+  teams, // Add teams prop
 }) => {
   return (
     <form onSubmit={handleSubmit}>
@@ -22,6 +23,25 @@ const DivisionForm = ({
         placeholder="Team Cap"
         onChange={handleInputChange}
       />
+
+      <div>
+        <h3>Select Teams</h3>
+        {teams.map(team => (
+          <div key={team._id}>
+            <label>
+              <input
+                type="checkbox"
+                name="teams" // The name for the teams field
+                value={team._id} // Team ID as value
+                checked={divisionData?.teams?.includes(team._id)} // Check if team is selected
+                onChange={handleInputChange}
+              />
+              {team.name} ({team.city})
+            </label>
+          </div>
+        ))}
+      </div>
+
       <button type="submit">{buttonText}</button>
     </form>
   );

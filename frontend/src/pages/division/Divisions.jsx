@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import DivisionForm from "../../components/forms/DivisionForm";
 
 const Divisions = () => {
   const [divisions, setDivisions] = useState([]);
   const [newDivision, setNewDivision] = useState({ name: "", teamCap: "" });
+  const [teams, setTeams] = useState([]); // State to store available teams
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -15,6 +17,16 @@ const Divisions = () => {
       .then(response => setDivisions(response.data))
       .catch(err => {
         setError("Error fetching divisions.");
+        console.error(err);
+      });
+
+    axios
+      .get("http://localhost:5000/api/teams/all", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then(response => setTeams(response.data))
+      .catch(err => {
+        setError("Error fetching teams.");
         console.error(err);
       });
   }, []);
@@ -48,23 +60,13 @@ const Divisions = () => {
       <h2>Divisions</h2>
       {error && <p>{error}</p>}
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="name"
-          value={newDivision.name}
-          placeholder="Division Name"
-          onChange={handleInputChange}
-        />
-        <input
-          type="number"
-          name="teamCap"
-          value={newDivision.teamCap}
-          placeholder="Team Cap"
-          onChange={handleInputChange}
-        />
-        <button type="submit">Create Division</button>
-      </form>
+      <DivisionForm
+        divisionData={newDivision}
+        handleInputChange={handleInputChange}
+        handleSubmit={handleSubmit}
+        buttonText="Create Division"
+        teams={teams}
+      />
 
       <ul>
         {divisions.map(division => (
