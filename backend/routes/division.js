@@ -4,55 +4,79 @@ import { userAuth, handleExceptions } from "./middleware.js";
 
 const router = express.Router();
 
-router.get("/all", handleExceptions, async (req, res) => {
-  const divs = await Division.find(); // Fetch all users from the database
-  res.status(200).json(divs); // Return the list of users
+// Get all divisions for the logged-in user
+router.get("/all", handleExceptions, userAuth, async (req, res) => {
+  try {
+    const divisions = await Division.find({ user: req.userId }); // Only fetch divisions created by the logged-in user
+    res.status(200).json(divisions);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching divisions." });
+  }
 });
 
+// Get a single division by ID
 router.get("/:id", handleExceptions, async (req, res) => {
-  const div = await Division.findById(req.params.id);
-  if (!div) {
-    return res.status(404).json({ message: "Division not found" });
+  try {
+    const division = await Division.findById(req.params.id).populate("teams");
+    if (!division) {
+      return res.status(404).json({ message: "Division not found" });
+    }
+    res.status(200).json(division);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching division." });
   }
-
-  res.status(200).json(div);
 });
 
-router.delete("/:id", handleExceptions, async (req, res) => {
-  const div = await Division.findById(req.teamId); // Find the user by their ID
-  if (!div) {
-    return res.status(404).json({ message: "User not found" });
-  }
-
-  // Delete the user from the database
-  await Division.findByIdAndDelete(req.teamId);
-
-  res.status(200).json({ message: "Division deleted successfully" });
-});
-
+// Create a new division
 router.post("/", handleExceptions, userAuth, async (req, res) => {
-  const newTeam = new Division({
-    ...req.body,
-    user: req.userId,
+  const { name, teamCap } = req.body;
+
+  const newDivision = new Division({
+    name,
+    teamCap,
+    user: req.userId, // Associate the division with the logged-in user
   });
 
-  await newTeam.save();
-
-  res.status(200).json(newTeam);
+  try {
+    await newDivision.save();
+    res.status(201).json(newDivision);
+  } catch (error) {
+    res.status(500).json({ message: "Error creating division." });
+  }
 });
 
+// Update division details
 router.put("/:id", handleExceptions, async (req, res) => {
-  const { name, players } = req.body;
+  try {
+    const division = await Division.findById(req.params.id);
+    if (!division) {
+      return res.status(404).json({ message: "Division not found" });
+    }
 
-  const div = await Division.findById(req.teamId);
+    const { name, teamCap } = req.body;
+    division.name = name || division.name;
+    division.teamCap = teamCap || division.teamCap;
 
-  // { ...obj, name, players}
+    await division.save();
+    res.status(200).json(division);
+  } catch (error) {
+    res.status(500).json({ message: "Error updating division." });
+  }
+});
 
-  div.name = name || div.name;
-  div.players = players || div.players;
-  await div.save();
+// Delete a division
+router.delete("/:id", handleExceptions, async (req, res) => {
+  try {
+    const division = await Division.findById(req.params.id);
+    if (!division) {
+      return res.status(404).json({ message: "Division not found" });
+    }
 
-  res.status(200).json(div);
+    await Division.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: "Division deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting division." });
+  }
 });
 
 export default router;

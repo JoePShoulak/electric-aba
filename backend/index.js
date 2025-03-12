@@ -6,6 +6,7 @@ import userRoutes from "./routes/user.js";
 import teamRoutes from "./routes/team.js";
 import playerRoutes from "./routes/player.js";
 import leagueRoutes from "./routes/league.js";
+import divisionRoutes from "./routes/division.js";
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/teams", teamRoutes);
 app.use("/api/players", playerRoutes);
 app.use("/api/leagues", leagueRoutes);
+app.use("/api/divisions", divisionRoutes);
 
 // Connect to MongoDB
 mongoose

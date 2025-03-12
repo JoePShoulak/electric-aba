@@ -6,6 +6,8 @@ import {
 } from "react-router-dom";
 import { NavBar, Header, Footer } from "./components";
 import {
+  Division,
+  DivisionEdit,
   Divisions,
   Home,
   League,
@@ -36,7 +38,6 @@ const AppRoutes = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/profile" element={userAuth(<Profile />)} />
-      <Route path="/divisions" element={userAuth(<Divisions />)} />
 
       <Route path="/players" element={userAuth(<Players />)} />
       <Route path="/players/:id" element={userAuth(<Player />)} />
@@ -49,6 +50,10 @@ const AppRoutes = () => {
       <Route path="/leagues" element={userAuth(<Leagues />)} />
       <Route path="/leagues/:id" element={userAuth(<League />)} />
       <Route path="/leagues/:id/edit" element={userAuth(<LeagueEdit />)} />
+
+      <Route path="/divisions" element={userAuth(<Divisions />)} />
+      <Route path="/divisions/:id" element={userAuth(<Division />)} />
+      <Route path="/divisions/:id/edit" element={userAuth(<DivisionEdit />)} />
     </Routes>
   );
 };

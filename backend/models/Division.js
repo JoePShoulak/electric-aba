@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const divisionSchema = new mongoose.Schema(
   {
@@ -8,13 +8,13 @@ const divisionSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Team",
-        required: true,
       },
-    ], // Reference to Team
+    ],
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Reference to User
   },
   { timestamps: true }
 );
 
 const Division = mongoose.model("Division", divisionSchema);
 
-module.exports = Division;
+export default Division;

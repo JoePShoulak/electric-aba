@@ -4,31 +4,36 @@ import { Link } from "react-router-dom";
 
 const Leagues = () => {
   const [leagues, setLeagues] = useState([]);
-  const [divisions, setDivisions] = useState([]); // To store available divisions
-  const [error, setError] = useState("");
+  const [divisions, setDivisions] = useState([]); // To store available divisions for the current user
   const [newLeague, setNewLeague] = useState({
     name: "",
-    divCap: "", // Division capacity
-    divs: [], // Array to store selected division IDs
+    divCap: "",
+    divs: [], // Array to store selected divisions
   });
+  const [error, setError] = useState("");
 
+  // Fetch all leagues created by the logged-in user
   useEffect(() => {
-    // Fetch all leagues
+    // Fetch leagues created by the user
     axios
-      .get("http://localhost:5000/api/leagues/all")
+      .get("http://localhost:5000/api/leagues/all", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }, // Include token for authentication
+      })
       .then(response => {
-        setLeagues(response.data);
+        setLeagues(response.data); // Set the leagues created by the logged-in user
       })
       .catch(err => {
         setError("Error fetching leagues.");
         console.error(err);
       });
 
-    // Fetch all divisions
+    // Fetch available divisions for the logged-in user
     axios
-      .get("http://localhost:5000/api/divisions/all")
+      .get("http://localhost:5000/api/divisions/all", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
       .then(response => {
-        setDivisions(response.data); // Set the divisions
+        setDivisions(response.data); // Set available divisions
       })
       .catch(err => {
         setError("Error fetching divisions.");
@@ -36,21 +41,21 @@ const Leagues = () => {
       });
   }, []);
 
+  // Handle input change for the new league form
   const handleInputChange = e => {
     const { name, value, checked } = e.target;
-
-    // Update the divs array when a checkbox is checked/unchecked
     if (name === "divs") {
+      // Handle multiple divisions (checkboxes)
       setNewLeague(prevState => {
         if (checked) {
           return {
             ...prevState,
-            divs: [...prevState.divs, value], // Add division to array if checked
+            divs: [...prevState.divs, value], // Add selected division
           };
         } else {
           return {
             ...prevState,
-            divs: prevState.divs.filter(divId => divId !== value), // Remove division if unchecked
+            divs: prevState.divs.filter(divId => divId !== value), // Remove unselected division
           };
         }
       });
@@ -62,31 +67,28 @@ const Leagues = () => {
     }
   };
 
-  const handleSubmit = async e => {
+  // Handle the form submission for creating a new league
+  const handleSubmit = e => {
     e.preventDefault();
 
-    try {
-      const token = localStorage.getItem("token");
-
-      // Ensure the token exists before sending the request
-      if (!token)
-        return setError("You need to be logged in to create a league.");
-
-      // Send request to create a new league
-      const response = await axios.post(
-        "http://localhost:5000/api/leagues",
-        newLeague,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      setLeagues([...leagues, response.data]); // Update the leagues list with the new league
-      setNewLeague({ name: "", divCap: "", divs: [] }); // Clear form data
-    } catch (err) {
-      setError("Error creating league.");
-      console.error(err);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("You need to be logged in to create a league.");
+      return;
     }
+
+    axios
+      .post("http://localhost:5000/api/leagues", newLeague, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then(response => {
+        setLeagues([...leagues, response.data]); // Add the new league to the list of leagues
+        setNewLeague({ name: "", divCap: "", divs: [] }); // Clear the form after submission
+      })
+      .catch(err => {
+        setError("Error creating league.");
+        console.error(err);
+      });
   };
 
   return (
@@ -94,6 +96,7 @@ const Leagues = () => {
       <h2>Leagues</h2>
       {error && <p>{error}</p>}
 
+      {/* Form to create a new League */}
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -106,7 +109,7 @@ const Leagues = () => {
           type="number"
           name="divCap"
           value={newLeague.divCap}
-          placeholder="Division Capacity"
+          placeholder="Division Cap"
           onChange={handleInputChange}
         />
 
@@ -119,7 +122,7 @@ const Leagues = () => {
                   type="checkbox"
                   name="divs"
                   value={div._id} // Division ID as value
-                  checked={newLeague.divs.includes(div._id)} // Check if division is selected
+                  checked={newLeague.divs.includes(div._id)} // Pre-select the divisions that are part of the new league
                   onChange={handleInputChange}
                 />
                 {div.name}
@@ -128,21 +131,21 @@ const Leagues = () => {
           ))}
         </div>
 
-        <button type="submit">Add League</button>
+        <button type="submit">Create League</button>
       </form>
 
-      <h2>All Leagues</h2>
-      {leagues.length > 0 ? (
-        <ul>
-          {leagues.map(league => (
+      <h3>My Leagues</h3>
+      <ul>
+        {leagues.length > 0 ? (
+          leagues.map(league => (
             <li key={league._id}>
               <Link to={`/leagues/${league._id}`}>{league.name}</Link>
             </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No leagues available. Add one!</p>
-      )}
+          ))
+        ) : (
+          <p>No leagues available. Create one!</p>
+        )}
+      </ul>
     </main>
   );
 };

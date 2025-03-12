@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 const leagueSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
@@ -6,9 +7,10 @@ const leagueSchema = new mongoose.Schema(
     divs: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Division",
+        ref: "Division", // Reference to Division model
       },
-    ], // Reference to Team
+    ], // Reference to Divisions
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Reference to User
   },
   { timestamps: true }
 );

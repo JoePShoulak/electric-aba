@@ -7,7 +7,7 @@ const router = express.Router();
 // Get all teams
 router.get("/all", handleExceptions, async (req, res) => {
   try {
-    const teams = await Team.find().populate("players"); // Populate player details
+    const teams = await Team.find({ user: req.userId }).populate("players"); // Populate player details
     res.status(200).json(teams);
   } catch (error) {
     res.status(500).json({ message: "Error fetching teams." });
