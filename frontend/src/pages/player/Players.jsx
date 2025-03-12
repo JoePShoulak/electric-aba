@@ -84,16 +84,16 @@ const Players = () => {
       <h2>Players</h2>
       {error && <p>{error}</p>}
 
-      {/* Use the PlayerForm component */}
       <PlayerForm
         playerData={newPlayer}
+        setPlayerData={setNewPlayer}
         handleInputChange={handleInputChange}
         handleSubmit={handleSubmit}
         error={error}
         buttonText="Add Player"
       />
 
-      <h2>My players</h2>
+      <h2>My players ({players.length})</h2>
       {players.length > 0 ? (
         <ul>
           {players.map(player => (
