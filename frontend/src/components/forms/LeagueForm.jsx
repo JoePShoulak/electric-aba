@@ -24,6 +24,34 @@ const LeagueForm = ({
         placeholder="Division Capacity"
         onChange={handleInputChange}
       />
+      <input
+        type="number"
+        name="foundingYear"
+        value={leagueData.foundingYear}
+        placeholder="Founding Year"
+        onChange={handleInputChange}
+      />
+      <input
+        type="number"
+        name="gamesPerSet"
+        value={leagueData.gamesPerSet}
+        placeholder="Games Per Set"
+        onChange={handleInputChange}
+      />
+      <input
+        type="number"
+        name="monthBegin"
+        value={leagueData.monthBegin}
+        placeholder="Start Month"
+        onChange={handleInputChange}
+      />
+      <input
+        type="number"
+        name="monthEnd"
+        value={leagueData.monthEnd}
+        placeholder="End Month"
+        onChange={handleInputChange}
+      />
 
       <div>
         <h3>Select Divisions</h3>
