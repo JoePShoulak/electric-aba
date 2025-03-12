@@ -80,51 +80,24 @@ form {
   background-color: #fff; /* White background for the form */
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for the form */
-}
 
-/* Style all inputs inside forms */
-form input {
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ddd; /* Light gray border */
-  border-radius: 5px;
-  transition: border-color 0.3s ease;
-}
-
-form input:focus {
-  border-color: #007bff; /* Blue border on focus */
-  outline: none;
-}
-
-/* Style the submit button */
-form button {
-  padding: 12px;
-  font-size: 16px;
-  background-color: #007bff; /* Primary blue color */
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-form button:hover {
-  background-color: #0056b3; /* Darker blue when hovering */
-}
-
-form button:active {
-  background-color: #003366; /* Even darker blue when the button is clicked */
-}
-
-/* Add spacing between the button and the last input */
-form button {
-  margin-top: 10px;
-}
-
-/* Style for form error messages */
-form p {
-  color: #ff4d4d; /* Red color for errors */
-  font-size: 14px;
-  margin: 0;
-  padding-top: 5px;
+  input {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd; /* Light gray border */
+    border-radius: 5px;
+    transition: border-color 0.3s ease;
+    
+    &:focus {
+      border-color: #007bff; /* Blue border on focus */
+      outline: none;
+    }
+  }
+  
+  p {
+    color: #ff4d4d; /* Red color for errors */
+    font-size: 14px;
+    margin: 0;
+    padding-top: 5px;
+  }
 }

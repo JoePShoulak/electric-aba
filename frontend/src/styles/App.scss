@@ -18,3 +18,22 @@ body, #root {
   background-color: #eee;
 }
 
+button {
+  padding: 12px;
+  font-size: 16px;
+  background-color: #007bff; /* Primary blue color */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+
+  button:hover {
+    background-color: #0056b3; /* Darker blue when hovering */
+  }
+  
+  button:active {
+    background-color: #003366; /* Even darker blue when the button is clicked */
+  }
+}
