@@ -8,9 +8,8 @@ const router = express.Router();
 // Get all leagues created by the logged-in user
 router.get("/all", handleExceptions, userAuth, async (req, res) => {
   try {
-    // Fetch leagues for the current user and populate the seasons with full data
-    const leagues = await League.find({ user: req.userId }).populate("seasons"); // Populate the seasons field with full Season documents
-    res.status(200).json(leagues); // Return the populated leagues
+    const leagues = await League.find({ user: req.userId }).populate("seasons");
+    res.status(200).json(leagues);
   } catch (error) {
     res
       .status(500)

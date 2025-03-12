@@ -8,7 +8,6 @@ const fetchLeague = (id, setError, setLeague) => {
     .get(`http://localhost:5000/api/leagues/${id}`)
     .then(response => {
       setLeague(response.data);
-      console.log(response.data);
     })
     .catch(err => {
       setError("Error fetching league details.");
