@@ -27,9 +27,11 @@ const LeagueEdit = () => {
       });
 
     axios
-      .get("http://localhost:5000/api/divisions/all")
+      .get("http://localhost:5000/api/divisions/all", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
       .then(response => {
-        setDivisions(response.data);
+        setDivisions(response.data); // Set available divisions
       })
       .catch(err => {
         setError("Error fetching divisions.");
