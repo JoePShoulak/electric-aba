@@ -28,10 +28,23 @@ const Players = () => {
 
   const handleInputChange = e => {
     const { name, value } = e.target;
-    setNewPlayer(prevState => ({
-      ...prevState,
-      [name]: value,
-    }));
+
+    // Check if the input is for a nested object (e.g., stats.points)
+    if (name.startsWith("stats.")) {
+      const statKey = name.split(".")[1]; // Extract the key (e.g., 'points', 'assists', etc.)
+      setNewPlayer(prevState => ({
+        ...prevState,
+        stats: {
+          ...prevState.stats,
+          [statKey]: value, // Update the specific stat value
+        },
+      }));
+    } else {
+      setNewPlayer(prevState => ({
+        ...prevState,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSubmit = async e => {

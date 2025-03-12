@@ -26,21 +26,21 @@ const PlayerForm = ({
       />
       <input
         type="number"
-        name="points"
+        name="stats.points"
         value={playerData.stats.points}
         placeholder="Points"
         onChange={handleInputChange}
       />
       <input
         type="number"
-        name="assists"
+        name="stats.assists"
         value={playerData.stats.assists}
         placeholder="Assists"
         onChange={handleInputChange}
       />
       <input
         type="number"
-        name="rebounds"
+        name="stats.rebounds"
         value={playerData.stats.rebounds}
         placeholder="Rebounds"
         onChange={handleInputChange}
