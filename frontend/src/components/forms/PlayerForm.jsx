@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const randomNames = [
   "LeBron James",
@@ -21,18 +22,74 @@ const randomPositions = [
   "Center",
 ];
 
-const PlayerForm = ({
-  playerData,
-  setPlayerData,
-  handleInputChange,
-  handleSubmit,
-  error,
-  buttonText,
-}) => {
+const PlayerForm = ({ mode, initialData = {}, playerId, onSuccess, error }) => {
+  const [playerData, setPlayerData] = useState({
+    first: "",
+    last: "",
+    nickname: "",
+    position: "",
+    born: "",
+    college: "",
+    stock: false,
+    year_signed: "",
+    years: "",
+    ppg: 0,
+    apg: 0,
+    rpg: 0,
+    fgpg: 0,
+  });
+
+  useEffect(() => {
+    if (mode === "edit" && initialData) {
+      setPlayerData(initialData);
+    }
+  }, [mode, initialData]);
+
+  const handleInputChange = e => {
+    const { name, value, type, checked } = e.target;
+    setPlayerData(prevData => ({
+      ...prevData,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const payload = {
+        ...playerData,
+        user: playerData.user || localStorage.getItem("userId"), // Ensure user field is included
+      };
+
+      let response;
+      const headers = { Authorization: `Bearer ${token}` };
+
+      if (mode === "edit") {
+        response = await axios.put(
+          `http://localhost:5000/api/players/${playerId}`,
+          payload,
+          { headers }
+        );
+      } else {
+        response = await axios.post(
+          "http://localhost:5000/api/players",
+          payload,
+          { headers }
+        );
+      }
+
+      onSuccess(response.data);
+    } catch (err) {
+      console.error("Error submitting player:", err);
+    }
+  };
+
   const randomize = e => {
     e.preventDefault();
-
-    const randomPlayer = {
+    setPlayerData({
       first:
         randomNames[Math.floor(Math.random() * randomNames.length)].split(
           " "
@@ -40,21 +97,19 @@ const PlayerForm = ({
       last: randomNames[Math.floor(Math.random() * randomNames.length)].split(
         " "
       )[1],
-      nickname: "", // Optional, if you want a random nickname, you can add it here
+      nickname: "",
       position:
         randomPositions[Math.floor(Math.random() * randomPositions.length)],
-      born: Math.floor(Math.random() * (1990 - 1960 + 1)) + 1960, // Random year of birth between 1960 and 1990
-      college: "Random College", // You can update this to fetch or randomize as needed
-      stock: Math.random() > 0.5, // Random true/false for stock
-      year_signed: Math.floor(Math.random() * (2022 - 2015 + 1)) + 2015, // Random year signed between 2015 and 2022
-      years: Math.floor(Math.random() * 10) + 1, // Random number of years (1-10)
-      ppg: Math.floor(Math.random() * 30), // Random points per game between 0 and 30
-      apg: Math.floor(Math.random() * 10), // Random assists per game between 0 and 10
-      rpg: Math.floor(Math.random() * 15), // Random rebounds per game between 0 and 15
-      fgpg: Math.floor(Math.random() * 5), // Random field goals per game between 0 and 5
-    };
-
-    setPlayerData(randomPlayer);
+      born: Math.floor(Math.random() * (1990 - 1960 + 1)) + 1960,
+      college: "Random College",
+      stock: Math.random() > 0.5,
+      year_signed: Math.floor(Math.random() * (2022 - 2015 + 1)) + 2015,
+      years: Math.floor(Math.random() * 10) + 1,
+      ppg: Math.floor(Math.random() * 30),
+      apg: Math.floor(Math.random() * 10),
+      rpg: Math.floor(Math.random() * 15),
+      fgpg: Math.floor(Math.random() * 5),
+    });
   };
 
   return (
@@ -77,7 +132,7 @@ const PlayerForm = ({
         type="text"
         name="nickname"
         value={playerData.nickname}
-        placeholder="Nickname (Optional)"
+        placeholder="Nickname"
         onChange={handleInputChange}
       />
       <input
@@ -143,11 +198,17 @@ const PlayerForm = ({
         placeholder="Field Goals per Game"
         onChange={handleInputChange}
       />
+
       {error && <p>{error}</p>}
-      <button type="submit">{buttonText}</button>
-      <button type="button" onClick={randomize}>
-        Randomize Player
+
+      <button type="submit">
+        {mode === "edit" ? "Update Player" : "Create Player"}
       </button>
+      {mode === "create" && (
+        <button type="button" onClick={randomize}>
+          Randomize Player
+        </button>
+      )}
     </form>
   );
 };

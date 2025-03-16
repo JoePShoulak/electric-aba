@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom"; // To access the player ID
+import { useNavigate, useParams } from "react-router-dom";
 
 const Player = () => {
-  const { id } = useParams(); // Get the player ID from the URL
+  const { id } = useParams();
   const [player, setPlayer] = useState(null);
   const [error, setError] = useState("");
-  const navigate = useNavigate(); // Use navigate to redirect to the edit page
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch player details using the player ID
     axios
       .get(`http://localhost:5000/api/players/${id}`)
       .then(response => {
@@ -32,7 +31,7 @@ const Player = () => {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then(() => {
-        navigate("/players"); // Redirect to the players list after deletion
+        navigate("/players");
       })
       .catch(err => {
         setError("Error deleting player.");
@@ -46,15 +45,25 @@ const Player = () => {
     <main>
       {player ? (
         <>
-          <h2>{player.name}</h2>
+          <h2>
+            {player.first} {player.last}
+          </h2>
+          {player.nickname && <p>Nickname: {player.nickname}</p>}
           <p>Position: {player.position}</p>
-          <p>Points: {player.stats.points}</p>
-          <p>Assists: {player.stats.assists}</p>
-          <p>Rebounds: {player.stats.rebounds}</p>
+          <p>Born: {player.born}</p>
+          <p>College: {player.college}</p>
+          <p>Stock: {player.stock ? "Yes" : "No"}</p>
+          <p>Year Signed: {player.year_signed}</p>
+          <p>Years Played: {player.years}</p>
+          <p>PPG: {player.ppg}</p>
+          <p>APG: {player.apg}</p>
+          <p>RPG: {player.rpg}</p>
+          <p>FGPG: {player.fgpg}</p>
+
           <button onClick={() => navigate(`/players/${id}/edit`)}>
             Edit Player
           </button>
-          <button onClick={handleDelete}>Delete Player</button>{" "}
+          <button onClick={handleDelete}>Delete Player</button>
         </>
       ) : (
         <p>Loading player details...</p>

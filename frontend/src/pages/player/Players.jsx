@@ -6,21 +6,6 @@ import PlayerForm from "../../components/forms/PlayerForm";
 const Players = () => {
   const [players, setPlayers] = useState([]);
   const [error, setError] = useState("");
-  const [newPlayer, setNewPlayer] = useState({
-    first: "",
-    last: "",
-    nickname: "",
-    position: "",
-    born: "",
-    college: "",
-    stock: false,
-    year_signed: "",
-    years: "",
-    ppg: 0,
-    apg: 0,
-    rpg: 0,
-    fgpg: 0,
-  });
 
   // Fetch all players
   useEffect(() => {
@@ -35,66 +20,8 @@ const Players = () => {
       });
   }, []);
 
-  const handleInputChange = e => {
-    const { name, value } = e.target;
-
-    // Check if the input is for a nested object (e.g., stats.points)
-    if (name.startsWith("stats.")) {
-      const statKey = name.split(".")[1]; // Extract the key (e.g., 'points', 'assists', etc.)
-      setNewPlayer(prevState => ({
-        ...prevState,
-        stats: {
-          ...prevState.stats,
-          [statKey]: value, // Update the specific stat value
-        },
-      }));
-    } else {
-      setNewPlayer(prevState => ({
-        ...prevState,
-        [name]: value,
-      }));
-    }
-  };
-
-  const handleSubmit = async e => {
-    e.preventDefault();
-
-    try {
-      const token = localStorage.getItem("token");
-
-      if (!token)
-        return setError("You need to be logged in to create a player.");
-
-      const response = await axios.post(
-        "http://localhost:5000/api/players",
-        newPlayer,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      setPlayers([...players, response.data]);
-      setNewPlayer({
-        first: "",
-        last: "",
-        nickname: "",
-        position: "",
-        born: "",
-        college: "",
-        stock: false,
-        year_signed: "",
-        years: "",
-        ppg: 0,
-        apg: 0,
-        rpg: 0,
-        fgpg: 0,
-      });
-    } catch (err) {
-      setError("Error creating player.");
-      console.error(err);
-    }
+  const handleSuccess = newPlayer => {
+    setPlayers(prevPlayers => [...prevPlayers, newPlayer]);
   };
 
   return (
@@ -102,15 +29,8 @@ const Players = () => {
       <h2>Players</h2>
       {error && <p>{error}</p>}
 
-      {/* Use the PlayerForm component */}
-      <PlayerForm
-        playerData={newPlayer}
-        setPlayerData={setNewPlayer}
-        handleInputChange={handleInputChange}
-        handleSubmit={handleSubmit}
-        error={error}
-        buttonText="Add Player"
-      />
+      {/* Use the PlayerForm component for adding players */}
+      <PlayerForm mode="create" onSuccess={handleSuccess} error={error} />
 
       <h2>My players ({players.length})</h2>
       {players.length > 0 ? (
