@@ -61,17 +61,15 @@ const AppRoutes = () => {
   );
 };
 
-const App = () => {
-  return (
-    <UserProvider>
-      <Router>
-        <Header />
-        <NavBar />
-        <AppRoutes />
-        <Footer />
-      </Router>
-    </UserProvider>
-  );
-};
+const App = () => (
+  <UserProvider>
+    <Router>
+      <Header />
+      <NavBar />
+      <AppRoutes />
+      <Footer />
+    </Router>
+  </UserProvider>
+);
 
 export default App;

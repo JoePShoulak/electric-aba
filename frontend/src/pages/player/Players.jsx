@@ -7,16 +7,25 @@ const Players = () => {
   const [players, setPlayers] = useState([]);
   const [error, setError] = useState("");
   const [newPlayer, setNewPlayer] = useState({
-    name: "",
+    first: "",
+    last: "",
+    nickname: "",
     position: "",
-    stats: { points: 0, assists: 0, rebounds: 0 },
-    team: "",
+    born: "",
+    college: "",
+    stock: false,
+    year_signed: "",
+    years: "",
+    ppg: 0,
+    apg: 0,
+    rpg: 0,
+    fgpg: 0,
   });
 
   // Fetch all players
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/players/owned", {
+      .get("http://localhost:5000/api/players/all", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then(response => setPlayers(response.data))
@@ -68,10 +77,19 @@ const Players = () => {
 
       setPlayers([...players, response.data]);
       setNewPlayer({
-        name: "",
+        first: "",
+        last: "",
+        nickname: "",
         position: "",
-        stats: { points: 0, assists: 0, rebounds: 0 },
-        team: "",
+        born: "",
+        college: "",
+        stock: false,
+        year_signed: "",
+        years: "",
+        ppg: 0,
+        apg: 0,
+        rpg: 0,
+        fgpg: 0,
       });
     } catch (err) {
       setError("Error creating player.");
@@ -84,6 +102,7 @@ const Players = () => {
       <h2>Players</h2>
       {error && <p>{error}</p>}
 
+      {/* Use the PlayerForm component */}
       <PlayerForm
         playerData={newPlayer}
         setPlayerData={setNewPlayer}
@@ -99,7 +118,7 @@ const Players = () => {
           {players.map(player => (
             <li key={player._id}>
               <Link to={`/players/${player._id}`}>
-                {player.name} ({player.position})
+                {player.first} {player.last} ({player.position})
               </Link>
             </li>
           ))}
