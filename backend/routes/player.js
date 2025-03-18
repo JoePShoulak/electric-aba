@@ -4,19 +4,11 @@ import { userAuth, handleExceptions } from "./middleware.js";
 
 const router = express.Router();
 
-// Get all players
-router.get("/all", handleExceptions, async (req, res) => {
+router.get("/all", handleExceptions, userAuth, async (req, res) => {
   try {
-    const players = await Player.find().populate("user"); // Populate the user reference
-    res.status(200).json(players); // Return the list of players
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching players." });
-  }
-});
-
-router.get("/owned", handleExceptions, userAuth, async (req, res) => {
-  try {
-    const players = await Player.find({ user: req.userId }).populate("user"); // Filter players by userId
+    const players = await Player.find({
+      $or: [{ stock: true }, { user: req.userId }],
+    }).populate("user");
     res.status(200).json(players);
   } catch (error) {
     res.status(500).json({ message: "Error fetching players." });
@@ -26,7 +18,7 @@ router.get("/owned", handleExceptions, userAuth, async (req, res) => {
 // Get single player by ID
 router.get("/:id", handleExceptions, async (req, res) => {
   try {
-    const player = await Player.findById(req.params.id).populate("user"); // Populate user reference
+    const player = await Player.findById(req.params.id).populate("user");
     if (!player) {
       return res.status(404).json({ message: "Player not found" });
     }
@@ -39,11 +31,11 @@ router.get("/:id", handleExceptions, async (req, res) => {
 // Delete a player
 router.delete("/:id", handleExceptions, async (req, res) => {
   try {
-    const player = await Player.findById(req.params.id); // Use req.params.id
+    const player = await Player.findById(req.params.id);
     if (!player) {
       return res.status(404).json({ message: "Player not found" });
     }
-    await Player.findByIdAndDelete(req.params.id); // Use req.params.id
+    await Player.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: "Player deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Error deleting player." });
@@ -53,40 +45,102 @@ router.delete("/:id", handleExceptions, async (req, res) => {
 // Create a new player
 router.post("/", handleExceptions, userAuth, async (req, res) => {
   try {
-    const { name, position, stats } = req.body;
+    const {
+      first,
+      last,
+      nickname,
+      position,
+      born,
+      college,
+      stock,
+      year_signed,
+      years,
+      ppg,
+      apg,
+      rpg,
+      fgpg,
+    } = req.body;
 
     const newPlayer = new Player({
-      name,
+      first,
+      last,
+      nickname,
       position,
-      stats,
-      user: req.userId, // Associate the player with the logged-in user
+      born,
+      college,
+      stock,
+      year_signed,
+      years,
+      ppg,
+      apg,
+      rpg,
+      fgpg,
+      user: req.userId,
     });
+
     await newPlayer.save();
-    res.status(201).json(newPlayer); // Return the newly created player
+    res.status(201).json(newPlayer);
   } catch (error) {
     res.status(500).json({ message: "Error creating player." });
   }
 });
 
-// Update player details
-router.put("/:id", handleExceptions, async (req, res) => {
+// Update player details (FIXED!)
+router.put("/:id", handleExceptions, userAuth, async (req, res) => {
   try {
-    const { name, position, stats } = req.body;
+    const {
+      first,
+      last,
+      nickname,
+      position,
+      born,
+      college,
+      stock,
+      year_signed,
+      years,
+      ppg,
+      apg,
+      rpg,
+      fgpg,
+    } = req.body;
 
-    const player = await Player.findById(req.params.id); // Use req.params.id
-
+    const player = await Player.findById(req.params.id);
     if (!player) {
       return res.status(404).json({ message: "Player not found" });
     }
 
-    player.name = name || player.name;
-    player.position = position || player.position;
-    player.stats = stats || player.stats;
+    // Retain the existing user field if not provided in the request
+    const updatedPlayer = {
+      first: first ?? player.first,
+      last: last ?? player.last,
+      nickname: nickname ?? player.nickname,
+      position: position ?? player.position,
+      born: born ?? player.born,
+      college: college ?? player.college,
+      stock: stock ?? player.stock,
+      year_signed: year_signed ?? player.year_signed,
+      years: years ?? player.years,
+      ppg: ppg ?? player.ppg,
+      apg: apg ?? player.apg,
+      rpg: rpg ?? player.rpg,
+      fgpg: fgpg ?? player.fgpg,
+      user: player.user, // Ensure user remains unchanged
+    };
 
-    await player.save();
-    res.status(200).json(player); // Return the updated player
+    // Use findOneAndUpdate to avoid validation errors
+    const updated = await Player.findByIdAndUpdate(
+      req.params.id,
+      updatedPlayer,
+      {
+        new: true,
+        runValidators: true, // Ensures validation is applied
+      }
+    );
+
+    res.status(200).json(updated);
   } catch (error) {
-    res.status(500).json({ message: "Error updating player." });
+    console.error("Error updating player:", error);
+    res.status(500).json({ message: "Error updating player.", error });
   }
 });
 
